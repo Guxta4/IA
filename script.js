@@ -174,10 +174,12 @@ function getResponse(question) {
     
     // Buscar resposta baseada em palavras-chave
     for (const [key, response] of Object.entries(responses)) {
-        if (question.includes(key.split(' ')[0]) && (key.includes('são paulo') ? question.includes('são paulo') : 
-            key.includes('rio grande do sul') ? question.includes('rio grande do sul') : 
-            key.includes('minas gerais') ? question.includes('minas gerais') : 
-            question.includes(key))) {
+        // Lógica para verificar se a pergunta do usuário contém a chave e a região
+        const keyParts = key.split(' ');
+        const mainKeyword = keyParts[0]; // Ex: 'colégio', 'supermercado', 'orfanato'
+        const regionKeyword = keyParts.slice(1).join(' '); // Ex: 'são paulo', 'rio grande do sul'
+
+        if (question.includes(mainKeyword) && question.includes(regionKeyword)) {
             return response;
         }
     }
