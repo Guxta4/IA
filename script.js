@@ -1,701 +1,547 @@
-:root {
-  /* Tema Claro - Cores principais */
-  --primary-color: #2563eb;
-  --primary-dark: #1d4ed8;
-  --secondary-color: #059669;
-  --accent-color: #dc2626;
-  --bg-primary: #ffffff;
-  --bg-secondary: #f8fafc;
-  --bg-tertiary: #e2e8f0;
-  --text-primary: #1e293b;
-  --text-secondary: #475569;
-  --text-muted: #64748b;
-  --border-color: #cbd5e1;
-  --sidebar-bg: #f1f5f9;
-  --sidebar-hover: #e2e8f0;
-  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
-  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
-  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
-  --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
-  --gradient-primary: linear-gradient(135deg, #2563eb 0%, #3b82f6 100%);
-  --gradient-secondary: linear-gradient(135deg, #059669 0%, #10b981 100%);
-  --gradient-bg: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
-}
-
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-body {
-  font-family: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
-  background: var(--gradient-bg);
-  color: var(--text-primary);
-  line-height: 1.6;
-  overflow-x: hidden;
-}
-
-.app-container {
-  min-height: 100vh;
-  display: flex;
-  position: relative;
-}
-
-/* Sidebar do Histórico */
-.sidebar {
-  width: 260px;
-  background: var(--sidebar-bg);
-  border-right: 1px solid var(--border-color);
-  display: flex;
-  flex-direction: column;
-  transition: transform 0.3s ease;
-  position: fixed;
-  height: 100vh;
-  z-index: 200;
-  overflow-y: auto;
-}
-
-.sidebar.hidden {
-  transform: translateX(-100%);
-}
-
-.sidebar-header {
-  padding: 1rem;
-  border-bottom: 1px solid var(--border-color);
-}
-
-.new-chat-btn {
-  width: 100%;
-  background: var(--gradient-primary);
-  color: white;
-  border: none;
-  padding: 0.75rem 1rem;
-  border-radius: 0.75rem;
-  cursor: pointer;
-  font-weight: 500;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  transition: all 0.2s ease;
-  box-shadow: var(--shadow-sm);
-}
-
-.new-chat-btn:hover {
-  transform: translateY(-1px);
-  box-shadow: var(--shadow-md);
-}
-
-.chat-history {
-  flex: 1;
-  padding: 1rem;
-}
-
-.history-section {
-  margin-bottom: 1.5rem;
-}
-
-.history-section h3 {
-  font-size: 0.875rem;
-  font-weight: 600;
-  color: var(--text-muted);
-  margin-bottom: 0.5rem;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-}
-
-.history-item {
-  padding: 0.75rem;
-  border-radius: 0.5rem;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  margin-bottom: 0.25rem;
-  font-size: 0.875rem;
-  color: var(--text-secondary);
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  position: relative;
-}
-
-.history-item:hover {
-  background: var(--sidebar-hover);
-  color: var(--text-primary);
-}
-
-.history-item.active {
-  background: var(--primary-color);
-  color: white;
-}
-
-.history-item i {
-  font-size: 0.75rem;
-  opacity: 0.7;
-}
-
-.history-item-text {
-  flex: 1;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.history-item-delete {
-  opacity: 0;
-  background: none;
-  border: none;
-  color: inherit;
-  cursor: pointer;
-  padding: 0.25rem;
-  border-radius: 0.25rem;
-  transition: all 0.2s ease;
-}
-
-.history-item:hover .history-item-delete {
-  opacity: 1;
-}
-
-.history-item-delete:hover {
-  background: rgba(255, 255, 255, 0.2);
-}
-
-/* Conteúdo Principal */
-.main-content {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  margin-left: 260px;
-  transition: margin-left 0.3s ease;
-}
-
-.main-content.sidebar-hidden {
-  margin-left: 0;
-}
-
-/* Header Moderno */
-.modern-header {
-  background: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(20px);
-  border-bottom: 1px solid var(--border-color);
-  padding: 1rem 1.5rem;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  position: sticky;
-  top: 0;
-  z-index: 100;
-  box-shadow: var(--shadow-sm);
-}
-
-.sidebar-toggle {
-  background: none;
-  border: none;
-  color: var(--text-primary);
-  font-size: 1.25rem;
-  padding: 0.75rem;
-  border-radius: 0.75rem;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  display: none;
-}
-
-.sidebar-toggle:hover {
-  background: var(--bg-tertiary);
-}
-
-.menu-button {
-  background: none;
-  border: none;
-  color: var(--text-primary);
-  font-size: 1.25rem;
-  padding: 0.75rem;
-  border-radius: 0.75rem;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.menu-button:hover {
-  background: var(--bg-tertiary);
-  transform: scale(1.05);
-}
-
-.logo-container {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-}
-
-.logo-icon {
-  width: 3rem;
-  height: 3rem;
-  background: var(--gradient-primary);
-  border-radius: 1rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.5rem;
-  color: white;
-  box-shadow: var(--shadow-lg);
-}
-
-.logo-text h1 {
-  font-size: 1.5rem;
-  font-weight: 700;
-  background: var(--gradient-primary);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-
-.logo-text .subtitle {
-  font-size: 0.75rem;
-  color: var(--text-muted);
-  font-weight: 500;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-}
-
-.header-actions {
-  display: flex;
-  gap: 0.5rem;
-}
-
-.theme-toggle {
-  background: none;
-  border: none;
-  color: var(--text-secondary);
-  font-size: 1.125rem;
-  padding: 0.75rem;
-  border-radius: 0.75rem;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.theme-toggle:hover {
-  background: var(--bg-tertiary);
-  color: var(--text-primary);
-}
-
-/* Menu Overlay Moderno */
-.menu-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.5);
-  backdrop-filter: blur(10px);
-  display: none;
-  align-items: center;
-  justify-content: center;
-  z-index: 1000;
-  opacity: 0;
-  transition: all 0.3s ease;
-}
-
-.menu-overlay.active {
-  opacity: 1;
-}
-
-.menu-container {
-  background: var(--bg-primary);
-  border-radius: 1.5rem;
-  padding: 2rem;
-  max-width: 90vw;
-  max-height: 80vh;
-  width: 700px;
-  box-shadow: var(--shadow-xl);
-  border: 1px solid var(--border-color);
-  overflow: hidden;
-}
-
-.menu-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 1.5rem;
-  padding-bottom: 1rem;
-  border-bottom: 1px solid var(--border-color);
-}
-
-.menu-header h2 {
-  font-size: 1.25rem;
-  font-weight: 600;
-  color: var(--text-primary);
-}
-
-.close-button {
-  background: none;
-  border: none;
-  color: var(--text-secondary);
-  font-size: 1.25rem;
-  padding: 0.5rem;
-  border-radius: 0.5rem;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.close-button:hover {
-  background: var(--bg-tertiary);
-  color: var(--text-primary);
-}
-
-.menu-content {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 0.75rem;
-  max-height: 60vh;
-  overflow-y: auto;
-}
-
-.menu-item {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  padding: 1rem;
-  background: var(--bg-secondary);
-  border-radius: 0.75rem;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  border: 1px solid var(--border-color);
-}
-
-.menu-item:hover {
-  background: var(--bg-tertiary);
-  border-color: var(--primary-color);
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-md);
-}
-
-.menu-item i {
-  font-size: 1.25rem;
-  color: var(--primary-color);
-  width: 1.5rem;
-  text-align: center;
-  flex-shrink: 0;
-}
-
-.menu-item span {
-  font-weight: 500;
-  color: var(--text-primary);
-  font-size: 0.9rem;
-}
-
-/* Chat Main */
-.chat-main {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  padding: 1.5rem;
-  gap: 1.5rem;
-}
-
-.chat-messages {
-  flex: 1;
-  overflow-y: auto;
-  padding: 1rem;
-  background: rgba(255, 255, 255, 0.8);
-  border-radius: 1.5rem;
-  border: 1px solid var(--border-color);
-  backdrop-filter: blur(10px);
-  box-shadow: var(--shadow-sm);
-}
-
-.welcome-message {
-  display: flex;
-  gap: 1rem;
-  margin-bottom: 2rem;
-}
-
-.bot-avatar {
-  width: 2.5rem;
-  height: 2.5rem;
-  background: var(--gradient-secondary);
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.125rem;
-  color: white;
-  flex-shrink: 0;
-  box-shadow: var(--shadow-md);
-}
-
-.message-content h3 {
-  font-size: 1.125rem;
-  font-weight: 600;
-  margin-bottom: 0.5rem;
-  color: var(--text-primary);
-}
-
-.message-content p {
-  color: var(--text-secondary);
-  line-height: 1.6;
-}
-
-/* Messages */
-.message {
-  display: flex;
-  gap: 1rem;
-  margin-bottom: 1.5rem;
-  animation: slideIn 0.3s ease;
-}
-
-.message.user {
-  flex-direction: row-reverse;
-}
-
-.user-avatar {
-  width: 2.5rem;
-  height: 2.5rem;
-  background: var(--gradient-primary);
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.125rem;
-  color: white;
-  flex-shrink: 0;
-  box-shadow: var(--shadow-md);
-}
-
-.message-bubble {
-  max-width: 70%;
-  padding: 1rem 1.25rem;
-  border-radius: 1.25rem;
-  position: relative;
-  box-shadow: var(--shadow-sm);
-}
-
-.message.user .message-bubble {
-  background: var(--gradient-primary);
-  color: white;
-  border-bottom-right-radius: 0.5rem;
-}
-
-.message.bot .message-bubble {
-  background: var(--bg-primary);
-  color: var(--text-primary);
-  border-bottom-left-radius: 0.5rem;
-  border: 1px solid var(--border-color);
-}
-
-/* Input Container */
-.input-container {
-  background: rgba(255, 255, 255, 0.8);
-  border-radius: 1.5rem;
-  padding: 1.5rem;
-  border: 1px solid var(--border-color);
-  backdrop-filter: blur(10px);
-  box-shadow: var(--shadow-sm);
-}
-
-.input-wrapper {
-  display: flex;
-  gap: 0.75rem;
-  align-items: center;
-  background: var(--bg-primary);
-  border-radius: 1rem;
-  padding: 0.75rem;
-  border: 1px solid var(--border-color);
-  transition: all 0.2s ease;
-  box-shadow: var(--shadow-sm);
-}
-
-.input-wrapper:focus-within {
-  border-color: var(--primary-color);
-  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
-}
-
-#userInput {
-  flex: 1;
-  background: none;
-  border: none;
-  color: var(--text-primary);
-  font-size: 1rem;
-  outline: none;
-  font-family: inherit;
-}
-
-#userInput::placeholder {
-  color: var(--text-muted);
-}
-
-.send-button {
-  background: var(--gradient-primary);
-  border: none;
-  color: white;
-  width: 2.5rem;
-  height: 2.5rem;
-  border-radius: 0.75rem;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.2s ease;
-  font-size: 1rem;
-  box-shadow: var(--shadow-sm);
-}
-
-.send-button:hover {
-  transform: scale(1.05);
-  box-shadow: var(--shadow-md);
-}
-
-.send-button:active {
-  transform: scale(0.95);
-}
-
-/* Typing Indicator */
-.typing-indicator {
-  display: none;
-  align-items: center;
-  gap: 1rem;
-  margin: 1rem;
-  opacity: 0;
-  animation: fadeIn 0.3s ease forwards;
-}
-
-.typing-indicator.active {
-  display: flex;
-}
-
-.typing-dots {
-  display: flex;
-  gap: 0.25rem;
-}
-
-.typing-dots span {
-  width: 0.5rem;
-  height: 0.5rem;
-  background: var(--primary-color);
-  border-radius: 50%;
-  animation: typing 1.4s infinite ease-in-out;
-}
-
-.typing-dots span:nth-child(2) {
-  animation-delay: 0.2s;
-}
-
-.typing-dots span:nth-child(3) {
-  animation-delay: 0.4s;
-}
-
-/* Animations */
-@keyframes slideIn {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
+// Estado da aplicação
+let isMenuOpen = false
+let isSidebarOpen = true
+let currentChatId = null
+let chatHistory = []
+let currentMessages = []
+let currentTheme = localStorage.getItem("theme") || "light"
+
+// Respostas específicas do Colégio Amorim
+const responses = {
+  "qual cidade fica o colégio amorim":
+    "🏙️ <strong>São Paulo</strong><br><br>O Colégio Amorim está localizado na cidade de São Paulo, especificamente na unidade de Ermelino Matarazzo.",
+
+  "qual bairro é a unidade que estamos falando":
+    "📍 <strong>Ermelino Matarazzo</strong><br><br>A unidade do Colégio Amorim fica no bairro de Ermelino Matarazzo, que está localizado na zona leste de São Paulo.",
+
+  "o colégio oferece ensino infantil":
+    "👶 <strong>Sim, oferecemos Ensino Infantil!</strong><br><br>As crianças pequenas têm educação adequada à idade, com metodologia especializada para o desenvolvimento infantil.",
+
+  "tem ensino fundamental":
+    "📚 <strong>Sim, temos Ensino Fundamental completo!</strong><br><br>Atendemos do 1º ao 9º ano do ensino fundamental, oferecendo uma base sólida para o desenvolvimento acadêmico dos alunos.",
+
+  "e ensino médio":
+    "🎓 <strong>Sim, oferecemos Ensino Médio!</strong><br><br>Os alunos podem concluir o ensino médio na mesma escola, garantindo continuidade no processo educacional.",
+
+  "o colégio tem quadra poliesportiva":
+    "🏃‍♂️ <strong>Sim, temos quadra poliesportiva!</strong><br><br>Nossa quadra permite a prática de diversos esportes como futsal, basquete e vôlei, promovendo a atividade física e o esporte.",
+
+  "oferece atividades extracurriculares":
+    "🎨 <strong>Sim, oferecemos diversas atividades extracurriculares!</strong><br><br>Incluímos esportes, artes, teatro e música para complementar o aprendizado e desenvolver talentos dos alunos.",
+
+  "tem biblioteca":
+    "📖 <strong>Sim, temos biblioteca!</strong><br><br>Oferecemos um espaço dedicado para leitura e estudo dos alunos, com acervo diversificado para apoiar o aprendizado.",
+
+  "aceita transporte escolar":
+    "🚌 <strong>Sim, aceitamos transporte escolar!</strong><br><br>Facilitamos o acesso dos estudantes que moram longe, trabalhando com empresas de transporte escolar credenciadas.",
+
+  "a escola tem laboratório de ciências":
+    "🧪 <strong>Sim, temos laboratório de ciências!</strong><br><br>Os alunos podem fazer experiências práticas de química, física e biologia, enriquecendo o aprendizado teórico com a prática.",
+}
+
+// Inicialização
+document.addEventListener("DOMContentLoaded", () => {
+  initializeApp()
+})
+
+function initializeApp() {
+  setupEventListeners()
+  setupMenuItems()
+  loadChatHistory()
+  startNewChat()
+
+  // Aplicar tema salvo ou detectar preferência do sistema
+  const savedTheme = localStorage.getItem("theme")
+  if (savedTheme) {
+    applyTheme(savedTheme)
+  } else {
+    applyTheme(detectSystemTheme())
   }
-  to {
-    opacity: 1;
-    transform: translateY(0);
+
+  // Verificar se é mobile
+  if (window.innerWidth <= 768) {
+    isSidebarOpen = false
+    document.getElementById("sidebar").classList.add("hidden")
+    document.querySelector(".main-content").classList.add("sidebar-hidden")
+  }
+
+  // Listener para mudanças na preferência do sistema
+  if (window.matchMedia) {
+    window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", (e) => {
+      if (!localStorage.getItem("theme")) {
+        applyTheme(e.matches ? "dark" : "light")
+      }
+    })
   }
 }
 
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
+function setupEventListeners() {
+  const userInput = document.getElementById("userInput")
+
+  // Enter para enviar mensagem
+  userInput.addEventListener("keypress", (e) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault()
+      sendMessage()
+    }
+  })
+
+  // Auto-resize do input
+  userInput.addEventListener("input", function () {
+    this.style.height = "auto"
+    this.style.height = this.scrollHeight + "px"
+  })
+}
+
+function setupMenuItems() {
+  const menuItems = document.querySelectorAll(".menu-item")
+  menuItems.forEach((item) => {
+    item.addEventListener("click", function () {
+      const question = this.getAttribute("data-question")
+      sendSuggestion(question)
+      toggleMenu()
+    })
+  })
+}
+
+// Funções do Sidebar
+function toggleSidebar() {
+  const sidebar = document.getElementById("sidebar")
+  const mainContent = document.querySelector(".main-content")
+
+  isSidebarOpen = !isSidebarOpen
+
+  if (isSidebarOpen) {
+    sidebar.classList.remove("hidden")
+    if (window.innerWidth > 768) {
+      mainContent.classList.remove("sidebar-hidden")
+    }
+  } else {
+    sidebar.classList.add("hidden")
+    mainContent.classList.add("sidebar-hidden")
   }
 }
 
-@keyframes typing {
-  0%,
-  60%,
-  100% {
-    transform: translateY(0);
-    opacity: 0.3;
+function startNewChat() {
+  currentChatId = generateChatId()
+  currentMessages = []
+
+  // Limpar mensagens do chat
+  const chatMessages = document.getElementById("chatMessages")
+  chatMessages.innerHTML = `
+    <div class="welcome-message">
+      <div class="bot-avatar">
+        <i class="fas fa-graduation-cap"></i>
+      </div>
+      <div class="message-content">
+        <h3>Bem-vindo ao ChatDonety! 🎓</h3>
+        <p>Sou seu assistente virtual especializado no Colégio Amorim de Ermelino Matarazzo! Posso te ajudar com informações sobre nossa escola. Use o menu ou digite sua pergunta!</p>
+      </div>
+    </div>
+  `
+
+  // Remover seleção ativa do histórico
+  document.querySelectorAll(".history-item").forEach((item) => {
+    item.classList.remove("active")
+  })
+}
+
+function generateChatId() {
+  return "chat_" + Date.now() + "_" + Math.random().toString(36).substr(2, 9)
+}
+
+function saveChatToHistory(title, messages) {
+  const chat = {
+    id: currentChatId,
+    title: title,
+    messages: [...messages],
+    timestamp: Date.now(),
   }
-  30% {
-    transform: translateY(-10px);
-    opacity: 1;
+
+  // Adicionar ao histórico
+  chatHistory.unshift(chat)
+
+  // Limitar histórico a 50 conversas
+  if (chatHistory.length > 50) {
+    chatHistory = chatHistory.slice(0, 50)
+  }
+
+  // Salvar no localStorage
+  localStorage.setItem("chatHistory", JSON.stringify(chatHistory))
+
+  // Atualizar UI do histórico
+  updateHistoryUI()
+}
+
+function loadChatHistory() {
+  const saved = localStorage.getItem("chatHistory")
+  if (saved) {
+    chatHistory = JSON.parse(saved)
+    updateHistoryUI()
   }
 }
 
-/* Scrollbar personalizada */
-.chat-messages::-webkit-scrollbar,
-.menu-content::-webkit-scrollbar,
-.sidebar::-webkit-scrollbar {
-  width: 6px;
+function updateHistoryUI() {
+  const now = new Date()
+  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate())
+  const yesterday = new Date(today.getTime() - 24 * 60 * 60 * 1000)
+  const weekAgo = new Date(today.getTime() - 7 * 24 * 60 * 60 * 1000)
+
+  const todayChats = document.getElementById("todayChats")
+  const yesterdayChats = document.getElementById("yesterdayChats")
+  const weekChats = document.getElementById("weekChats")
+
+  // Limpar containers
+  todayChats.innerHTML = ""
+  yesterdayChats.innerHTML = ""
+  weekChats.innerHTML = ""
+
+  chatHistory.forEach((chat) => {
+    const chatDate = new Date(chat.timestamp)
+    const historyItem = createHistoryItem(chat)
+
+    if (chatDate >= today) {
+      todayChats.appendChild(historyItem)
+    } else if (chatDate >= yesterday) {
+      yesterdayChats.appendChild(historyItem)
+    } else if (chatDate >= weekAgo) {
+      weekChats.appendChild(historyItem)
+    }
+  })
 }
 
-.chat-messages::-webkit-scrollbar-track,
-.menu-content::-webkit-scrollbar-track,
-.sidebar::-webkit-scrollbar-track {
-  background: var(--bg-secondary);
-  border-radius: 3px;
+function createHistoryItem(chat) {
+  const item = document.createElement("div")
+  item.className = "history-item"
+  item.setAttribute("data-chat-id", chat.id)
+
+  item.innerHTML = `
+    <i class="fas fa-message"></i>
+    <span class="history-item-text">${chat.title}</span>
+    <button class="history-item-delete" onclick="deleteChatFromHistory('${chat.id}', event)">
+      <i class="fas fa-trash"></i>
+    </button>
+  `
+
+  item.addEventListener("click", () => loadChat(chat.id))
+
+  return item
 }
 
-.chat-messages::-webkit-scrollbar-thumb,
-.menu-content::-webkit-scrollbar-thumb,
-.sidebar::-webkit-scrollbar-thumb {
-  background: var(--primary-color);
-  border-radius: 3px;
+function loadChat(chatId) {
+  const chat = chatHistory.find((c) => c.id === chatId)
+  if (!chat) return
+
+  currentChatId = chatId
+  currentMessages = [...chat.messages]
+
+  // Limpar e recarregar mensagens
+  const chatMessages = document.getElementById("chatMessages")
+  chatMessages.innerHTML = `
+    <div class="welcome-message">
+      <div class="bot-avatar">
+        <i class="fas fa-graduation-cap"></i>
+      </div>
+      <div class="message-content">
+        <h3>Bem-vindo ao ChatDonety! 🎓</h3>
+        <p>Sou seu assistente virtual especializado no Colégio Amorim de Ermelino Matarazzo! Posso te ajudar com informações sobre nossa escola. Use o menu ou digite sua pergunta!</p>
+      </div>
+    </div>
+  `
+
+  // Recarregar mensagens
+  currentMessages.forEach((msg) => {
+    addMessageToUI(msg.text, msg.sender)
+  })
+
+  // Atualizar seleção no histórico
+  document.querySelectorAll(".history-item").forEach((item) => {
+    item.classList.remove("active")
+  })
+  document.querySelector(`[data-chat-id="${chatId}"]`)?.classList.add("active")
 }
 
-/* Responsividade */
-@media (max-width: 768px) {
-  .sidebar {
-    transform: translateX(-100%);
-  }
+function deleteChatFromHistory(chatId, event) {
+  event.stopPropagation()
 
-  .sidebar.show {
-    transform: translateX(0);
-  }
+  chatHistory = chatHistory.filter((chat) => chat.id !== chatId)
+  localStorage.setItem("chatHistory", JSON.stringify(chatHistory))
+  updateHistoryUI()
 
-  .main-content {
-    margin-left: 0;
-  }
-
-  .sidebar-toggle {
-    display: flex;
-  }
-
-  .modern-header {
-    padding: 1rem;
-  }
-
-  .logo-text h1 {
-    font-size: 1.25rem;
-  }
-
-  .chat-main {
-    padding: 1rem;
-  }
-
-  .menu-container {
-    margin: 1rem;
-    padding: 1.5rem;
-    width: calc(100% - 2rem);
-  }
-
-  .menu-content {
-    grid-template-columns: 1fr;
-  }
-
-  .message-bubble {
-    max-width: 85%;
+  // Se o chat deletado era o atual, iniciar novo chat
+  if (currentChatId === chatId) {
+    startNewChat()
   }
 }
 
-@media (max-width: 480px) {
-  .logo-container {
-    gap: 0.5rem;
-  }
+function toggleMenu() {
+  const menuPopup = document.getElementById("menuPopup")
+  isMenuOpen = !isMenuOpen
 
-  .logo-icon {
-    width: 2.5rem;
-    height: 2.5rem;
-    font-size: 1.25rem;
-  }
-
-  .header-actions {
-    display: none;
+  if (isMenuOpen) {
+    menuPopup.style.display = "flex"
+    setTimeout(() => {
+      menuPopup.classList.add("active")
+    }, 10)
+    document.body.style.overflow = "hidden"
+  } else {
+    menuPopup.classList.remove("active")
+    setTimeout(() => {
+      menuPopup.style.display = "none"
+      document.body.style.overflow = "auto"
+    }, 300)
   }
 }
+
+function applyTheme(theme) {
+  document.documentElement.setAttribute("data-theme", theme)
+  currentTheme = theme
+  localStorage.setItem("theme", theme)
+
+  // Atualizar ícone do botão
+  updateThemeIcon()
+}
+
+function updateThemeIcon() {
+  const themeButton = document.querySelector(".theme-toggle")
+  const sunIcon = themeButton.querySelector(".sun-icon")
+  const moonIcon = themeButton.querySelector(".moon-icon")
+
+  if (currentTheme === "dark") {
+    sunIcon.style.display = "none"
+    moonIcon.style.display = "inline-block"
+  } else {
+    sunIcon.style.display = "inline-block"
+    moonIcon.style.display = "none"
+  }
+}
+
+function toggleTheme() {
+  const newTheme = currentTheme === "light" ? "dark" : "light"
+  applyTheme(newTheme)
+
+  // Animação suave do ícone
+  const themeButton = document.querySelector(".theme-toggle")
+  themeButton.style.transform = "scale(0.8)"
+
+  setTimeout(() => {
+    themeButton.style.transform = "scale(1)"
+  }, 150)
+
+  // Feedback visual
+  console.log(`Tema alterado para: ${newTheme === "light" ? "Claro" : "Escuro"}`)
+}
+
+function detectSystemTheme() {
+  if (window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches) {
+    return "dark"
+  }
+  return "light"
+}
+
+function sendMessage() {
+  const input = document.getElementById("userInput")
+  const message = input.value.trim()
+
+  if (message === "") return
+
+  // Adicionar mensagem do usuário
+  addMessage(message, "user")
+
+  // Limpar input
+  input.value = ""
+  input.style.height = "auto"
+
+  // Mostrar indicador de digitação
+  showTypingIndicator()
+
+  // Simular delay de resposta
+  setTimeout(
+    () => {
+      hideTypingIndicator()
+      const response = getResponse(message.toLowerCase())
+      addMessage(response, "bot")
+
+      // Salvar no histórico se for a primeira mensagem
+      if (currentMessages.length === 2) {
+        // user + bot
+        const title = message.length > 30 ? message.substring(0, 30) + "..." : message
+        saveChatToHistory(title, currentMessages)
+      }
+    },
+    1000 + Math.random() * 1000,
+  )
+}
+
+function sendSuggestion(question) {
+  const input = document.getElementById("userInput")
+  input.value = question
+  sendMessage()
+}
+
+function addMessage(text, sender) {
+  // Adicionar à lista de mensagens atuais
+  currentMessages.push({ text, sender, timestamp: Date.now() })
+
+  // Adicionar à UI
+  addMessageToUI(text, sender)
+}
+
+function addMessageToUI(text, sender) {
+  const chatMessages = document.getElementById("chatMessages")
+
+  const messageDiv = document.createElement("div")
+  messageDiv.className = `message ${sender}`
+
+  const avatar = document.createElement("div")
+  avatar.className = sender === "user" ? "user-avatar" : "bot-avatar"
+  avatar.innerHTML = sender === "user" ? '<i class="fas fa-user"></i>' : '<i class="fas fa-graduation-cap"></i>'
+
+  const bubble = document.createElement("div")
+  bubble.className = "message-bubble"
+  bubble.innerHTML = text.replace(/\n/g, "<br>")
+
+  messageDiv.appendChild(avatar)
+  messageDiv.appendChild(bubble)
+
+  chatMessages.appendChild(messageDiv)
+
+  // Scroll para a última mensagem
+  chatMessages.scrollTop = chatMessages.scrollHeight
+}
+
+function showTypingIndicator() {
+  const indicator = document.getElementById("typingIndicator")
+  const chatMessages = document.getElementById("chatMessages")
+
+  chatMessages.appendChild(indicator)
+  indicator.classList.add("active")
+  chatMessages.scrollTop = chatMessages.scrollHeight
+}
+
+function hideTypingIndicator() {
+  const indicator = document.getElementById("typingIndicator")
+  indicator.classList.remove("active")
+}
+
+function getResponse(question) {
+  // Normalizar a pergunta removendo acentos e caracteres especiais
+  const normalizedQuestion = question
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^\w\s]/g, "")
+    .trim()
+
+  // Buscar resposta exata
+  for (const [key, response] of Object.entries(responses)) {
+    const normalizedKey = key
+      .toLowerCase()
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .replace(/[^\w\s]/g, "")
+
+    if (normalizedQuestion.includes(normalizedKey) || normalizedKey.includes(normalizedQuestion)) {
+      return response
+    }
+  }
+
+  // Buscar por palavras-chave específicas
+  if (
+    normalizedQuestion.includes("cidade") ||
+    normalizedQuestion.includes("sao paulo") ||
+    normalizedQuestion.includes("sp")
+  ) {
+    return responses["qual cidade fica o colégio amorim"]
+  }
+
+  if (
+    normalizedQuestion.includes("bairro") ||
+    normalizedQuestion.includes("ermelino") ||
+    normalizedQuestion.includes("matarazzo")
+  ) {
+    return responses["qual bairro é a unidade que estamos falando"]
+  }
+
+  if (
+    normalizedQuestion.includes("infantil") ||
+    normalizedQuestion.includes("crianca") ||
+    normalizedQuestion.includes("pequena")
+  ) {
+    return responses["o colégio oferece ensino infantil"]
+  }
+
+  if (normalizedQuestion.includes("fundamental")) {
+    return responses["tem ensino fundamental"]
+  }
+
+  if (normalizedQuestion.includes("medio") || normalizedQuestion.includes("ensino medio")) {
+    return responses["e ensino médio"]
+  }
+
+  if (
+    normalizedQuestion.includes("quadra") ||
+    normalizedQuestion.includes("esporte") ||
+    normalizedQuestion.includes("poliesportiva")
+  ) {
+    return responses["o colégio tem quadra poliesportiva"]
+  }
+
+  if (normalizedQuestion.includes("extracurricular") || normalizedQuestion.includes("atividade")) {
+    return responses["oferece atividades extracurriculares"]
+  }
+
+  if (normalizedQuestion.includes("biblioteca") || normalizedQuestion.includes("livro")) {
+    return responses["tem biblioteca"]
+  }
+
+  if (
+    normalizedQuestion.includes("transporte") ||
+    normalizedQuestion.includes("onibus") ||
+    normalizedQuestion.includes("van")
+  ) {
+    return responses["aceita transporte escolar"]
+  }
+
+  if (
+    normalizedQuestion.includes("laboratorio") ||
+    normalizedQuestion.includes("ciencia") ||
+    normalizedQuestion.includes("experiencia")
+  ) {
+    return responses["a escola tem laboratório de ciências"]
+  }
+
+  // Resposta padrão
+  const defaultResponses = [
+    "🤔 Não encontrei essa informação específica sobre o Colégio Amorim.<br><br>💡 <strong>Posso ajudar com:</strong><br>• Localização da escola<br>• Níveis de ensino oferecidos<br>• Estrutura e atividades<br>• Serviços disponíveis<br><br>📋 <strong>Use o menu</strong> para ver as perguntas que posso responder!",
+    "💭 Interessante! Não tenho essa informação no momento.<br><br>🎯 <strong>Pergunte sobre:</strong><br>• Onde fica o colégio<br>• Que séries atendemos<br>• Nossa estrutura<br>• Atividades oferecidas<br><br>📞 <strong>Para mais informações:</strong> Entre em contato diretamente com a escola!",
+    "🎯 Ainda não tenho essa informação sobre o Colégio Amorim.<br><br>📚 <strong>Posso responder sobre:</strong><br>• Localização e bairro<br>• Ensino infantil, fundamental e médio<br>• Quadra, biblioteca e laboratório<br>• Transporte e atividades<br><br>💬 <strong>Reformule sua pergunta</strong> ou use o menu de sugestões!",
+  ]
+
+  return defaultResponses[Math.floor(Math.random() * defaultResponses.length)]
+}
+
+// Fechar menu ao clicar fora
+document.addEventListener("click", (e) => {
+  const menuPopup = document.getElementById("menuPopup")
+  const menuButton = document.querySelector(".menu-button")
+
+  if (isMenuOpen && !menuPopup.contains(e.target) && !menuButton.contains(e.target)) {
+    toggleMenu()
+  }
+})
+
+// Responsividade para sidebar
+window.addEventListener("resize", () => {
+  if (window.innerWidth <= 768) {
+    if (isSidebarOpen) {
+      document.getElementById("sidebar").classList.add("show")
+    }
+  } else {
+    document.getElementById("sidebar").classList.remove("show")
+    if (isSidebarOpen) {
+      document.getElementById("sidebar").classList.remove("hidden")
+      document.querySelector(".main-content").classList.remove("sidebar-hidden")
+    }
+  }
+})
