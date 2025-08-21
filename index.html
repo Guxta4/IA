@@ -11,113 +11,132 @@
 </head>
 <body>
     <div class="app-container">
-        <!-- Header moderno -->
-        <header class="modern-header">
-            <button class="menu-button" onclick="toggleMenu()">
-                <i class="fas fa-bars"></i>
-            </button>
-            <div class="logo-container">
-                <div class="logo-icon">
-                    <i class="fas fa-graduation-cap"></i>
-                </div>
-                <div class="logo-text">
-                    <h1>ChatDonety</h1>
-                    <span class="subtitle">Colégio Amorim Assistant</span>
-                </div>
-            </div>
-            <div class="header-actions">
-                <button class="theme-toggle" onclick="toggleTheme()">
-                    <i class="fas fa-sun"></i>
+        <!-- Sidebar do histórico -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <button class="new-chat-btn" onclick="startNewChat()">
+                    <i class="fas fa-plus"></i>
+                    Nova conversa
                 </button>
             </div>
-        </header>
-
-        <!-- Menu moderno -->
-        <div class="menu-overlay" id="menuPopup">
-            <div class="menu-container">
-                <div class="menu-header">
-                    <h2>Perguntas sobre o Colégio Amorim</h2>
-                    <button class="close-button" onclick="toggleMenu()">
-                        <i class="fas fa-times"></i>
-                    </button>
+            <div class="chat-history" id="chatHistory">
+                <div class="history-section">
+                    <h3>Hoje</h3>
+                    <div class="history-items" id="todayChats"></div>
                 </div>
-                <div class="menu-content">
-                    <div class="menu-item" data-question="Quais são os horários de funcionamento do Colégio Amorim?">
-                        <i class="fas fa-clock"></i>
-                        <span>Horários de funcionamento</span>
-                    </div>
-                    <div class="menu-item" data-question="Como faço para matricular meu filho no Colégio Amorim?">
-                        <i class="fas fa-user-plus"></i>
-                        <span>Processo de matrícula</span>
-                    </div>
-                    <div class="menu-item" data-question="Quais são as mensalidades do Colégio Amorim?">
-                        <i class="fas fa-dollar-sign"></i>
-                        <span>Valores e mensalidades</span>
-                    </div>
-                    <div class="menu-item" data-question="Quais atividades extracurriculares o Colégio Amorim oferece?">
-                        <i class="fas fa-futbol"></i>
-                        <span>Atividades extracurriculares</span>
-                    </div>
-                    <div class="menu-item" data-question="Onde fica localizado o Colégio Amorim?">
-                        <i class="fas fa-map-marker-alt"></i>
-                        <span>Localização e endereço</span>
-                    </div>
-                    <div class="menu-item" data-question="Quais são os diferenciais do Colégio Amorim?">
-                        <i class="fas fa-star"></i>
-                        <span>Diferenciais da escola</span>
-                    </div>
-                    <div class="menu-item" data-question="Como entrar em contato com o Colégio Amorim?">
-                        <i class="fas fa-phone"></i>
-                        <span>Contato e telefone</span>
-                    </div>
-                    <div class="menu-item" data-question="Quais séries o Colégio Amorim atende?">
-                        <i class="fas fa-book"></i>
-                        <span>Séries e níveis de ensino</span>
-                    </div>
-                    <div class="menu-item" data-question="O Colégio Amorim tem ensino integral?">
-                        <i class="fas fa-calendar-alt"></i>
-                        <span>Ensino integral</span>
-                    </div>
-                    <div class="menu-item" data-question="O que você é capaz de fazer?">
-                        <i class="fas fa-question-circle"></i>
-                        <span>Minhas capacidades</span>
-                    </div>
+                <div class="history-section">
+                    <h3>Ontem</h3>
+                    <div class="history-items" id="yesterdayChats"></div>
+                </div>
+                <div class="history-section">
+                    <h3>Últimos 7 dias</h3>
+                    <div class="history-items" id="weekChats"></div>
                 </div>
             </div>
-        </div>
+        </aside>
 
-        <!-- Chat container moderno -->
-        <main class="chat-main">
-            <div class="chat-messages" id="chatMessages">
-                <div class="welcome-message">
-                    <div class="bot-avatar">
+        <!-- Conteúdo principal -->
+        <main class="main-content">
+            <!-- Header moderno -->
+            <header class="modern-header">
+                <button class="sidebar-toggle" onclick="toggleSidebar()">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <button class="menu-button" onclick="toggleMenu()">
+                    <i class="fas fa-question-circle"></i>
+                </button>
+                <div class="logo-container">
+                    <div class="logo-icon">
                         <i class="fas fa-graduation-cap"></i>
                     </div>
-                    <div class="message-content">
-                        <h3>Bem-vindo ao ChatDonety! 🎓</h3>
-                        <p>Sou seu assistente virtual especializado no Colégio Amorim! Posso te ajudar com informações sobre matrículas, horários, atividades e muito mais. Use o menu ou digite sua pergunta!</p>
+                    <div class="logo-text">
+                        <h1>ChatDonety</h1>
+                        <span class="subtitle">Colégio Amorim Assistant</span>
+                    </div>
+                </div>
+                <div class="header-actions">
+                    <button class="theme-toggle" onclick="toggleTheme()">
+                        <i class="fas fa-sun"></i>
+                    </button>
+                </div>
+            </header>
+
+            <!-- Menu moderno -->
+            <div class="menu-overlay" id="menuPopup">
+                <div class="menu-container">
+                    <div class="menu-header">
+                        <h2>Perguntas sobre o Colégio Amorim</h2>
+                        <button class="close-button" onclick="toggleMenu()">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    <div class="menu-content">
+                        <div class="menu-item" data-question="Qual cidade fica o Colégio Amorim?">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <span>Qual cidade fica o Colégio Amorim?</span>
+                        </div>
+                        <div class="menu-item" data-question="Qual bairro é a unidade que estamos falando?">
+                            <i class="fas fa-location-dot"></i>
+                            <span>Qual bairro é a unidade que estamos falando?</span>
+                        </div>
+                        <div class="menu-item" data-question="O colégio oferece ensino infantil?">
+                            <i class="fas fa-baby"></i>
+                            <span>O colégio oferece ensino infantil?</span>
+                        </div>
+                        <div class="menu-item" data-question="Tem ensino fundamental?">
+                            <i class="fas fa-book"></i>
+                            <span>Tem ensino fundamental?</span>
+                        </div>
+                        <div class="menu-item" data-question="E ensino médio?">
+                            <i class="fas fa-graduation-cap"></i>
+                            <span>E ensino médio?</span>
+                        </div>
+                        <div class="menu-item" data-question="O colégio tem quadra poliesportiva?">
+                            <i class="fas fa-running"></i>
+                            <span>O colégio tem quadra poliesportiva?</span>
+                        </div>
+                        <div class="menu-item" data-question="Oferece atividades extracurriculares?">
+                            <i class="fas fa-palette"></i>
+                            <span>Oferece atividades extracurriculares?</span>
+                        </div>
+                        <div class="menu-item" data-question="Tem biblioteca?">
+                            <i class="fas fa-book-open"></i>
+                            <span>Tem biblioteca?</span>
+                        </div>
+                        <div class="menu-item" data-question="Aceita transporte escolar?">
+                            <i class="fas fa-bus"></i>
+                            <span>Aceita transporte escolar?</span>
+                        </div>
+                        <div class="menu-item" data-question="A escola tem laboratório de ciências?">
+                            <i class="fas fa-flask"></i>
+                            <span>A escola tem laboratório de ciências?</span>
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Input area moderna -->
-            <div class="input-container">
-                <div class="input-wrapper">
-                    <input type="text" id="userInput" placeholder="Pergunte sobre o Colégio Amorim..." autocomplete="off">
-                    <button class="send-button" onclick="sendMessage()">
-                        <i class="fas fa-paper-plane"></i>
-                    </button>
+            <!-- Chat container moderno -->
+            <div class="chat-main">
+                <div class="chat-messages" id="chatMessages">
+                    <div class="welcome-message">
+                        <div class="bot-avatar">
+                            <i class="fas fa-graduation-cap"></i>
+                        </div>
+                        <div class="message-content">
+                            <h3>Bem-vindo ao ChatDonety! 🎓</h3>
+                            <p>Sou seu assistente virtual especializado no Colégio Amorim de Ermelino Matarazzo! Posso te ajudar com informações sobre nossa escola. Use o menu ou digite sua pergunta!</p>
+                        </div>
+                    </div>
                 </div>
-                <div class="input-suggestions">
-                    <button class="suggestion-chip" onclick="sendSuggestion('Como fazer matrícula?')">
-                        📝 Matrícula
-                    </button>
-                    <button class="suggestion-chip" onclick="sendSuggestion('Horários de funcionamento')">
-                        🕐 Horários
-                    </button>
-                    <button class="suggestion-chip" onclick="sendSuggestion('Atividades extracurriculares')">
-                        ⚽ Atividades
-                    </button>
+
+                <!-- Input area moderna -->
+                <div class="input-container">
+                    <div class="input-wrapper">
+                        <input type="text" id="userInput" placeholder="Pergunte sobre o Colégio Amorim..." autocomplete="off">
+                        <button class="send-button" onclick="sendMessage()">
+                            <i class="fas fa-paper-plane"></i>
+                        </button>
+                    </div>
                 </div>
             </div>
         </main>
