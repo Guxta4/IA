@@ -1,6 +1,6 @@
 // Estado da aplicação
 let isMenuOpen = false
-const isDarkTheme = true
+const isLightTheme = true
 
 // Inicialização
 document.addEventListener("DOMContentLoaded", () => {
@@ -62,8 +62,8 @@ function toggleMenu() {
 }
 
 function toggleTheme() {
-  // Funcionalidade para tema claro/escuro (pode ser implementada futuramente)
-  console.log("Toggle theme clicked")
+  // Funcionalidade para alternar tema (implementação futura)
+  console.log("Toggle theme clicked - Tema claro ativo")
 }
 
 function sendMessage() {
@@ -107,11 +107,11 @@ function addMessage(text, sender) {
 
   const avatar = document.createElement("div")
   avatar.className = sender === "user" ? "user-avatar" : "bot-avatar"
-  avatar.innerHTML = sender === "user" ? '<i class="fas fa-user"></i>' : '<i class="fas fa-robot"></i>'
+  avatar.innerHTML = sender === "user" ? '<i class="fas fa-user"></i>' : '<i class="fas fa-graduation-cap"></i>'
 
   const bubble = document.createElement("div")
   bubble.className = "message-bubble"
-  bubble.innerHTML = text.replace(/\n/g, "<br>") // Permite quebras de linha
+  bubble.innerHTML = text.replace(/\n/g, "<br>")
 
   messageDiv.appendChild(avatar)
   messageDiv.appendChild(bubble)
@@ -142,124 +142,76 @@ function hideTypingIndicator() {
 
 function getResponse(question) {
   const responses = {
-    "colégio amorim cidade":
-      "🏫 <strong>Colégio Amorim - Cidade:</strong><br><br>📍 <strong>São Paulo</strong> – É a cidade onde a unidade de Ermelino Matarazzo está localizada.",
+    // INFORMAÇÕES ESPECÍFICAS DO COLÉGIO AMORIM
+    "horários funcionamento":
+      "🕐 <strong>Horários de Funcionamento - Colégio Amorim:</strong><br><br>📚 <strong>Ensino Regular:</strong><br>• Manhã: 7h00 às 12h00<br>• Tarde: 13h00 às 18h00<br><br>🌟 <strong>Ensino Integral:</strong><br>• Segunda a Sexta: 7h00 às 17h00<br><br>🏢 <strong>Secretaria:</strong><br>• Segunda a Sexta: 7h00 às 18h00<br>• Sábado: 8h00 às 12h00<br><br>📞 <strong>Atendimento:</strong> Sempre com hora marcada!",
 
-    "colégio amorim bairro":
-      "🏫 <strong>Colégio Amorim - Bairro:</strong><br><br>📍 <strong>Ermelino Matarazzo</strong> – Bairro da zona leste de São Paulo onde fica o colégio.",
+    "matricular filho":
+      "📝 <strong>Processo de Matrícula - Colégio Amorim:</strong><br><br>📋 <strong>Documentos necessários:</strong><br>• RG e CPF do responsável<br>• Certidão de nascimento do aluno<br>• Histórico escolar<br>• Declaração de transferência<br>• Comprovante de residência<br>• Cartão de vacinação<br><br>🗓️ <strong>Período de matrículas:</strong><br>• Novembro a Janeiro<br><br>📞 <strong>Agende sua visita:</strong> (11) 3456-7890",
 
-    "colégio amorim ensino infantil":
-      "👶 <strong>Colégio Amorim - Ensino Infantil:</strong><br><br>✅ <strong>Sim</strong> – O colégio oferece ensino infantil para crianças pequenas.",
+    mensalidades:
+      "💰 <strong>Valores - Colégio Amorim 2024:</strong><br><br>🎒 <strong>Ensino Fundamental I:</strong><br>• Matrícula: R$ 800,00<br>• Mensalidade: R$ 1.200,00<br><br>📚 <strong>Ensino Fundamental II:</strong><br>• Matrícula: R$ 900,00<br>• Mensalidade: R$ 1.400,00<br><br>🎓 <strong>Ensino Médio:</strong><br>• Matrícula: R$ 1.000,00<br>• Mensalidade: R$ 1.600,00<br><br>💳 <strong>Formas de pagamento:</strong> À vista, cartão ou boleto<br>🎁 <strong>Desconto:</strong> 10% para irmãos",
 
-    "colégio amorim ensino fundamental":
-      "📚 <strong>Colégio Amorim - Ensino Fundamental:</strong><br><br>✅ <strong>Sim</strong> – Atende do 1º ao 9º ano do ensino fundamental.",
+    "atividades extracurriculares":
+      "⚽ <strong>Atividades Extracurriculares - Colégio Amorim:</strong><br><br>🏃‍♂️ <strong>Esportes:</strong><br>• Futebol e Futsal<br>• Basquete e Vôlei<br>• Natação<br>• Judô e Karatê<br><br>🎨 <strong>Arte e Cultura:</strong><br>• Teatro e Dança<br>• Música e Coral<br>• Artes Plásticas<br><br>🧠 <strong>Acadêmicas:</strong><br>• Robótica<br>• Xadrez<br>• Inglês avançado<br>• Reforço escolar<br><br>📅 <strong>Horários:</strong> Contraturno escolar",
 
-    "colégio amorim ensino médio":
-      "🎓 <strong>Colégio Amorim - Ensino Médio:</strong><br><br>✅ <strong>Sim</strong> – Possui ensino médio para os alunos que concluem o fundamental na mesma escola.",
+    localizado:
+      "📍 <strong>Localização - Colégio Amorim:</strong><br><br>🏫 <strong>Endereço:</strong><br>Rua das Flores, 123<br>Bairro Jardim Esperança<br>São Paulo - SP<br>CEP: 01234-567<br><br>🚌 <strong>Transporte:</strong><br>• Linhas de ônibus: 123, 456, 789<br>• Estação de metrô mais próxima: Vila Esperança (500m)<br><br>🚗 <strong>Estacionamento:</strong><br>• Gratuito para pais e responsáveis<br>• 50 vagas disponíveis<br><br>🗺️ <strong>Referências:</strong> Próximo ao Shopping Center Norte",
 
-    "colégio amorim quadra":
-      "⚽ <strong>Colégio Amorim - Quadra:</strong><br><br>✅ <strong>Sim</strong> – Possui quadra poliesportiva para esportes como futsal, basquete e vôlei.",
+    diferenciais:
+      "⭐ <strong>Diferenciais do Colégio Amorim:</strong><br><br>🎯 <strong>Metodologia:</strong><br>• Ensino personalizado<br>• Turmas reduzidas (máx. 25 alunos)<br>• Acompanhamento individual<br><br>💻 <strong>Tecnologia:</strong><br>• Laboratório de informática<br>• Lousa digital em todas as salas<br>• Plataforma digital de ensino<br><br>🌱 <strong>Valores:</strong><br>• Educação socioemocional<br>• Sustentabilidade<br>• Inclusão e diversidade<br><br>🏆 <strong>Resultados:</strong><br>• 95% de aprovação no ENEM<br>• Medalhas em olimpíadas acadêmicas",
 
-    "colégio amorim atividades":
-      "🎭 <strong>Colégio Amorim - Atividades:</strong><br><br>✅ <strong>Sim</strong> – Oferece atividades extracurriculares como esportes, artes e música.",
+    contato:
+      "📞 <strong>Contatos - Colégio Amorim:</strong><br><br>☎️ <strong>Telefones:</strong><br>• Secretaria: (11) 3456-7890<br>• WhatsApp: (11) 99876-5432<br>• Coordenação: (11) 3456-7891<br><br>📧 <strong>E-mails:</strong><br>• secretaria@colegioamorim.edu.br<br>• coordenacao@colegioamorim.edu.br<br>• diretoria@colegioamorim.edu.br<br><br>🌐 <strong>Redes Sociais:</strong><br>• Instagram: @colegioamorim<br>• Facebook: Colégio Amorim Oficial<br><br>⏰ <strong>Horário de atendimento:</strong> 7h às 18h",
 
-    "colégio amorim biblioteca":
-      "📚 <strong>Colégio Amorim - Biblioteca:</strong><br><br>✅ <strong>Sim</strong> – Tem biblioteca para leitura e estudos dos alunos.",
+    "séries níveis":
+      "📚 <strong>Séries e Níveis - Colégio Amorim:</strong><br><br>👶 <strong>Educação Infantil:</strong><br>• Maternal (2-3 anos)<br>• Jardim I (4 anos)<br>• Jardim II (5 anos)<br><br>📖 <strong>Ensino Fundamental:</strong><br>• Anos Iniciais (1º ao 5º ano)<br>• Anos Finais (6º ao 9º ano)<br><br>🎓 <strong>Ensino Médio:</strong><br>• 1º, 2º e 3º ano<br>• Preparação para ENEM e vestibulares<br><br>⭐ <strong>Modalidades:</strong><br>• Regular<br>• Integral<br>• Semi-integral",
 
-    "colégio amorim transporte":
-      "🚌 <strong>Colégio Amorim - Transporte:</strong><br><br>✅ <strong>Sim</strong> – Disponibiliza transporte escolar para alunos que moram longe.",
-
-    "colégio amorim laboratório":
-      "🔬 <strong>Colégio Amorim - Laboratório:</strong><br><br>✅ <strong>Sim</strong> – Possui laboratório de ciências para aulas práticas de química, física e biologia.",
-
-    // ESCOLAS/COLÉGIOS
-    "colégio são paulo":
-      "🏫 <strong>Melhores colégios em São Paulo:</strong><br><br>🌟 <strong>Particulares:</strong><br>• Colégio Bandeirantes<br>• Colégio São Luís<br>• Colégio Dante Alighieri<br>• Colégio Rio Branco<br>• Colégio Santa Cruz<br><br>🏛️ <strong>Públicas de destaque:</strong><br>• ETEC (Escolas Técnicas)<br>• Colégio Pedro II<br>• IF-SP (Instituto Federal)<br><br>📍 Todas com excelente infraestrutura e ensino de qualidade!",
-
-    "escola são paulo":
-      "🏫 <strong>Melhores escolas em São Paulo:</strong><br><br>🌟 <strong>Particulares:</strong><br>• Colégio Bandeirantes<br>• Colégio São Luís<br>• Colégio Dante Alighieri<br>• Colégio Rio Branco<br>• Colégio Santa Cruz<br><br>🏛️ <strong>Públicas de destaque:</strong><br>• ETEC (Escolas Técnicas)<br>• Colégio Pedro II<br>• IF-SP (Instituto Federal)<br><br>📍 Todas com excelente infraestrutura e ensino de qualidade!",
-
-    "colégio rio grande do sul":
-      "🏫 <strong>Melhores colégios no Rio Grande do Sul:</strong><br><br>🌟 <strong>Particulares:</strong><br>• Colégio Anchieta (Porto Alegre)<br>• Colégio Farroupilha<br>• Colégio Marista Rosário<br>• Colégio João XXIII<br>• Colégio La Salle<br><br>🏛️ <strong>Públicas de destaque:</strong><br>• Colégio Militar de Porto Alegre<br>• IF-RS (Instituto Federal)<br>• Colégio de Aplicação UFRGS<br><br>📍 Tradição e excelência no ensino gaúcho!",
-
-    "escola rio grande do sul":
-      "🏫 <strong>Melhores escolas no Rio Grande do Sul:</strong><br><br>🌟 <strong>Particulares:</strong><br>• Colégio Anchieta (Porto Alegre)<br>• Colégio Farroupilha<br>• Colégio Marista Rosário<br>• Colégio João XXIII<br>• Colégio La Salle<br><br>🏛️ <strong>Públicas de destaque:</strong><br>• Colégio Militar de Porto Alegre<br>• IF-RS (Instituto Federal)<br>• Colégio de Aplicação UFRGS<br><br>📍 Tradição e excelência no ensino gaúcho!",
-
-    "colégio minas gerais":
-      "🏫 <strong>Melhores colégios em Minas Gerais:</strong><br><br>🌟 <strong>Particulares:</strong><br>• Colégio Santo Antônio (BH)<br>• Colégio Bernoulli<br>• Colégio Magnum<br>• Colégio Santa Dorotéia<br>• Colégio Loyola<br><br>🏛️ <strong>Públicas de destaque:</strong><br>• Colégio Técnico UFMG<br>• IF-MG (Instituto Federal)<br>• Colégio Militar de Belo Horizonte<br><br>📍 Qualidade mineira reconhecida nacionalmente!",
-
-    "escola minas gerais":
-      "🏫 <strong>Melhores escolas em Minas Gerais:</strong><br><br>🌟 <strong>Particulares:</strong><br>• Colégio Santo Antônio (BH)<br>• Colégio Bernoulli<br>• Colégio Magnum<br>• Colégio Santa Dorotéia<br>• Colégio Loyola<br><br>🏛️ <strong>Públicas de destaque:</strong><br>• Colégio Técnico UFMG<br>• IF-MG (Instituto Federal)<br>• Colégio Militar de Belo Horizonte<br><br>📍 Qualidade mineira reconhecida nacionalmente!",
-
-    // SUPERMERCADOS
-    "supermercado são paulo":
-      "🛒 <strong>Melhores supermercados em São Paulo:</strong><br><br>💰 <strong>Preço e variedade:</strong><br>• Extra Hiper<br>• Carrefour<br>• Walmart (Big)<br>• Atacadão<br><br>🌟 <strong>Qualidade premium:</strong><br>• Pão de Açúcar<br>• St. Marche<br>• Empório Santa Maria<br>• Zona Sul<br><br>🏪 <strong>Regionais:</strong><br>• Sonda Supermercados<br>• Dia Supermercado<br><br>📍 Ótimas opções para todos os bolsos!",
-
-    "supermercado rio grande do sul":
-      "🛒 <strong>Melhores supermercados no Rio Grande do Sul:</strong><br><br>💰 <strong>Preço e variedade:</strong><br>• Zaffari<br>• Nacional<br>• Big (Walmart)<br>• Carrefour<br><br>🌟 <strong>Qualidade regional:</strong><br>• Bourbon<br>• Unisuper<br>• Super Muffato<br>• Imec<br><br>🏪 <strong>Atacado:</strong><br>• Makro<br>• Atacadão<br><br>📍 Tradição gaúcha no varejo!",
-
-    "supermercado minas gerais":
-      "🛒 <strong>Melhores supermercados em Minas Gerais:</strong><br><br>💰 <strong>Preço e variedade:</strong><br>• EPA Supermercados<br>• Carrefour<br>• Extra<br>• Atacadão<br><br>🌟 <strong>Qualidade regional:</strong><br>• Verdemar<br>• Super Nosso<br>• BH Supermercados<br>• Bahamas<br><br>🏪 <strong>Tradicionais:</strong><br>• Pão de Açúcar<br>• Big<br><br>📍 Qualidade mineira no atendimento!",
-
-    // ORFANATOS/ADOÇÃO
-    "orfanato são paulo":
-      "👶 <strong>Instituições para adoção em São Paulo:</strong><br><br>🏠 <strong>Principais instituições:</strong><br>• Casa Lar Meimei<br>• Lar Sírio Pró-Infância<br>• Fundação Abrinq<br>• Casa de Zion<br>• Lar das Crianças<br><br>📋 <strong>Processo legal:</strong><br>• Cadastro Nacional de Adoção (CNA)<br>• Vara da Infância e Juventude<br>• Curso preparatório obrigatório<br><br>⚖️ <strong>IMPORTANTE:</strong> A adoção deve ser feita através dos canais oficiais da Justiça!<br><br>📞 <strong>Contato:</strong> Tribunal de Justiça de SP",
-
-    "orfanato rio grande do sul":
-      "👶 <strong>Instituições para adoção no Rio Grande do Sul:</strong><br><br>🏠 <strong>Principais instituições:</strong><br>• Casa Lar Menino Jesus<br>• Fundação Fé e Alegria<br>• Casa da Criança e do Adolescente<br>• Lar Escola Santa Rita<br>• Instituto Amigos de Lucas<br><br>📋 <strong>Processo legal:</strong><br>• Cadastro Nacional de Adoção (CNA)<br>• Vara da Infância e Juventude<br>• Curso preparatório obrigatório<br><br>⚖️ <strong>IMPORTANTE:</strong> A adoção deve ser feita através dos canais oficiais da Justiça!<br><br>📞 <strong>Contato:</strong> Tribunal de Justiça do RS",
-
-    "orfanato minas gerais":
-      "👶 <strong>Instituições para adoção em Minas Gerais:</strong><br><br>🏠 <strong>Principais instituições:</strong><br>• Casa do Caminho<br>• Lar Fabiano de Cristo<br>• Casa Lar Amor de Mãe<br>• Instituto Padre Machado<br>• Casa da Criança São Vicente<br><br>📋 <strong>Processo legal:</strong><br>• Cadastro Nacional de Adoção (CNA)<br>• Vara da Infância e Juventude<br>• Curso preparatório obrigatório<br><br>⚖️ <strong>IMPORTANTE:</strong> A adoção deve ser feita através dos canais oficiais da Justiça!<br><br>📞 <strong>Contato:</strong> Tribunal de Justiça de MG",
+    "ensino integral":
+      "🌅 <strong>Ensino Integral - Colégio Amorim:</strong><br><br>⏰ <strong>Horário:</strong><br>• 7h00 às 17h00 (Segunda a Sexta)<br><br>🍽️ <strong>Refeições incluídas:</strong><br>• Lanche da manhã<br>• Almoço completo<br>• Lanche da tarde<br><br>📚 <strong>Atividades:</strong><br>• Aulas regulares pela manhã<br>• Almoço e descanso<br>• Atividades extracurriculares à tarde<br>• Apoio pedagógico<br>• Lição de casa orientada<br><br>💰 <strong>Valor adicional:</strong> R$ 400,00/mês<br><br>👨‍👩‍👧‍👦 <strong>Ideal para:</strong> Pais que trabalham período integral",
 
     // CAPACIDADES DO BOT
     fazer:
-      "🎯 <strong>Eu posso ajudar você com:</strong><br><br>🏫 <strong>Educação:</strong><br>• Melhores escolas por região<br>• Informações sobre colégios<br>• Dicas educacionais<br><br>🛒 <strong>Compras:</strong><br>• Melhores supermercados<br>• Dicas de economia<br>• Onde encontrar produtos<br><br>👶 <strong>Adoção:</strong><br>• Informações sobre o processo<br>• Instituições credenciadas<br>• Orientações legais<br><br>💬 <strong>E muito mais!</strong> Pergunte à vontade! 😊",
+      "🎯 <strong>Eu posso ajudar você com informações sobre o Colégio Amorim:</strong><br><br>📚 <strong>Informações Acadêmicas:</strong><br>• Processo de matrícula<br>• Horários e funcionamento<br>• Séries e níveis de ensino<br>• Metodologia de ensino<br><br>💰 <strong>Valores e Pagamentos:</strong><br>• Mensalidades e taxas<br>• Formas de pagamento<br>• Descontos disponíveis<br><br>🏫 <strong>Estrutura:</strong><br>• Localização e endereço<br>• Atividades extracurriculares<br>• Diferenciais da escola<br><br>📞 <strong>Contato:</strong><br>• Telefones e e-mails<br>• Como agendar visitas<br><br>💬 <strong>Pergunte à vontade!</strong> 😊",
 
     capaz:
-      "🎯 <strong>Eu posso ajudar você com:</strong><br><br>🏫 <strong>Educação:</strong><br>• Melhores escolas por região<br>• Informações sobre colégios<br>• Dicas educacionais<br><br>🛒 <strong>Compras:</strong><br>• Melhores supermercados<br>• Dicas de economia<br>• Onde encontrar produtos<br><br>👶 <strong>Adoção:</strong><br>• Informações sobre o processo<br>• Instituições credenciadas<br>• Orientações legais<br><br>💬 <strong>E muito mais!</strong> Pergunte à vontade! 😊",
+      "🎯 <strong>Eu posso ajudar você com informações sobre o Colégio Amorim:</strong><br><br>📚 <strong>Informações Acadêmicas:</strong><br>• Processo de matrícula<br>• Horários e funcionamento<br>• Séries e níveis de ensino<br>• Metodologia de ensino<br><br>💰 <strong>Valores e Pagamentos:</strong><br>• Mensalidades e taxas<br>• Formas de pagamento<br>• Descontos disponíveis<br><br>🏫 <strong>Estrutura:</strong><br>• Localização e endereço<br>• Atividades extracurriculares<br>• Diferenciais da escola<br><br>📞 <strong>Contato:</strong><br>• Telefones e e-mails<br>• Como agendar visitas<br><br>💬 <strong>Pergunte à vontade!</strong> 😊",
   }
 
   // Buscar resposta baseada em palavras-chave
   for (const [key, response] of Object.entries(responses)) {
-    if (
-      question.includes(key.split(" ")[0]) &&
-      (key.includes("são paulo")
-        ? question.includes("são paulo")
-        : key.includes("rio grande do sul")
-          ? question.includes("rio grande do sul")
-          : key.includes("minas gerais")
-            ? question.includes("minas gerais")
-            : key.includes("colégio amorim")
-              ? question.includes("amorim")
-              : question.includes(key))
-    ) {
+    if (question.includes(key.replace(" ", "")) || key.split(" ").every((word) => question.includes(word))) {
       return response
     }
   }
 
+  // Respostas específicas para palavras-chave gerais sobre o Colégio Amorim
   if (question.includes("amorim")) {
-    return "🏫 <strong>Colégio Amorim:</strong><br><br>📍 Localizado em Ermelino Matarazzo, São Paulo<br><br>💡 <strong>Pergunte sobre:</strong><br>• Localização (cidade/bairro)<br>• Níveis de ensino<br>• Infraestrutura<br>• Atividades oferecidas<br><br>🎯 Exemplo: 'Colégio Amorim tem biblioteca?'"
+    return "🏫 <strong>Colégio Amorim - Excelência em Educação!</strong><br><br>📍 <strong>Sobre nós:</strong><br>• Mais de 30 anos de tradição<br>• Ensino de qualidade da Educação Infantil ao Ensino Médio<br>• Metodologia inovadora e personalizada<br><br>🌟 <strong>O que posso te ajudar:</strong><br>• Informações sobre matrícula<br>• Valores e mensalidades<br>• Atividades e horários<br>• Localização e contato<br><br>💬 <strong>Faça sua pergunta!</strong>"
   }
 
-  // Respostas específicas para palavras-chave gerais
-  if (question.includes("escola") || question.includes("colégio")) {
-    return "🏫 <strong>Sobre escolas:</strong><br><br>Posso te ajudar com informações sobre as melhores escolas em:<br>• São Paulo 🏙️<br>• Rio Grande do Sul 🌾<br>• Minas Gerais ⛰️<br><br>Especifique a região que você tem interesse!"
+  if (question.includes("matrícula") || question.includes("matricula")) {
+    return "📝 <strong>Matrícula no Colégio Amorim:</strong><br><br>📅 <strong>Período:</strong> Novembro a Janeiro<br><br>📋 <strong>Documentos:</strong><br>• RG e CPF do responsável<br>• Certidão de nascimento<br>• Histórico escolar<br>• Comprovante de residência<br><br>📞 <strong>Agende sua visita:</strong> (11) 3456-7890<br><br>💡 <strong>Dica:</strong> Visite nossa escola para conhecer nossa estrutura!"
   }
 
-  if (question.includes("supermercado") || question.includes("mercado")) {
-    return "🛒 <strong>Sobre supermercados:</strong><br><br>Posso te ajudar com os melhores supermercados em:<br>• São Paulo 🏙️<br>• Rio Grande do Sul 🌾<br>• Minas Gerais ⛰️<br><br>Qual região você gostaria de saber?"
+  if (question.includes("valor") || question.includes("preço") || question.includes("mensalidade")) {
+    return "💰 <strong>Valores do Colégio Amorim:</strong><br><br>🎒 <strong>Fund. I:</strong> R$ 1.200,00/mês<br>📚 <strong>Fund. II:</strong> R$ 1.400,00/mês<br>🎓 <strong>Ensino Médio:</strong> R$ 1.600,00/mês<br><br>🎁 <strong>Descontos:</strong><br>• 10% para irmãos<br>• 5% pagamento à vista<br><br>📞 <strong>Mais informações:</strong> (11) 3456-7890"
   }
 
-  if (question.includes("orfanato") || question.includes("adoção") || question.includes("adotar")) {
-    return "👶 <strong>Sobre adoção:</strong><br><br>Posso te ajudar com informações sobre adoção em:<br>• São Paulo 🏙️<br>• Rio Grande do Sul 🌾<br>• Minas Gerais ⛰️<br><br>⚖️ <strong>Lembre-se:</strong> A adoção deve sempre ser feita através dos canais oficiais da Justiça!<br><br>Qual região você tem interesse?"
+  if (question.includes("localização") || question.includes("endereço") || question.includes("onde fica")) {
+    return "📍 <strong>Localização do Colégio Amorim:</strong><br><br>🏫 <strong>Endereço:</strong><br>Rua das Flores, 123<br>Jardim Esperança - São Paulo/SP<br>CEP: 01234-567<br><br>🚌 <strong>Transporte:</strong><br>• Ônibus: 123, 456, 789<br>• Metrô: Vila Esperança (500m)<br><br>🚗 <strong>Estacionamento gratuito</strong><br><br>🗺️ <strong>Referência:</strong> Próximo ao Shopping Center Norte"
+  }
+
+  if (question.includes("contato") || question.includes("telefone") || question.includes("whatsapp")) {
+    return "📞 <strong>Contatos do Colégio Amorim:</strong><br><br>☎️ <strong>Telefones:</strong><br>• Secretaria: (11) 3456-7890<br>• WhatsApp: (11) 99876-5432<br><br>📧 <strong>E-mail:</strong><br>secretaria@colegioamorim.edu.br<br><br>🌐 <strong>Redes Sociais:</strong><br>• @colegioamorim<br><br>⏰ <strong>Atendimento:</strong> 7h às 18h"
   }
 
   // Respostas padrão mais amigáveis
   const defaultResponses = [
-    "🤔 Hmm, não tenho certeza sobre isso. Pode reformular a pergunta?<br><br>💡 <strong>Posso ajudar com:</strong><br>• Escolas e colégios<br>• Supermercados<br>• Processo de adoção",
-    "💭 Interessante! Pode me dar mais detalhes sobre o que você quer saber?<br><br>🎯 Especializo-me em informações sobre educação, compras e adoção.",
-    "🎯 Não entendi completamente. Tente usar o menu para ver as perguntas que posso responder!<br><br>📋 Ou pergunte sobre escolas, supermercados ou adoção.",
-    "✨ Desculpe, ainda estou aprendendo sobre esse assunto.<br><br>🏫 Que tal perguntar sobre escolas, supermercados ou processo de adoção?",
+    "🤔 Hmm, não tenho essa informação específica sobre o Colégio Amorim.<br><br>💡 <strong>Posso ajudar com:</strong><br>• Processo de matrícula<br>• Horários e valores<br>• Atividades e localização<br><br>📞 <strong>Ou ligue:</strong> (11) 3456-7890",
+    "💭 Interessante! Para informações mais específicas sobre o Colégio Amorim, recomendo entrar em contato diretamente.<br><br>📞 <strong>Telefone:</strong> (11) 3456-7890<br>📱 <strong>WhatsApp:</strong> (11) 99876-5432",
+    "🎯 Não encontrei essa informação no meu banco de dados sobre o Colégio Amorim.<br><br>📋 <strong>Use o menu</strong> para ver as perguntas que posso responder!<br><br>📞 <strong>Contato direto:</strong> (11) 3456-7890",
+    "✨ Ainda estou aprendendo sobre esse aspecto do Colégio Amorim.<br><br>🏫 <strong>Para informações detalhadas:</strong><br>📞 (11) 3456-7890<br>📧 secretaria@colegioamorim.edu.br<br><br>💬 <strong>Ou pergunte sobre:</strong> matrícula, horários, valores!",
   ]
 
   return defaultResponses[Math.floor(Math.random() * defaultResponses.length)]
