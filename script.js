@@ -1,6 +1,42 @@
 // Estado da aplicação
 let isMenuOpen = false
-const isLightTheme = true
+let isSidebarOpen = true
+let currentChatId = null
+let chatHistory = []
+let currentMessages = []
+
+// Respostas específicas do Colégio Amorim
+const responses = {
+  "qual cidade fica o colégio amorim":
+    "🏙️ <strong>São Paulo</strong><br><br>O Colégio Amorim está localizado na cidade de São Paulo, especificamente na unidade de Ermelino Matarazzo.",
+
+  "qual bairro é a unidade que estamos falando":
+    "📍 <strong>Ermelino Matarazzo</strong><br><br>A unidade do Colégio Amorim fica no bairro de Ermelino Matarazzo, que está localizado na zona leste de São Paulo.",
+
+  "o colégio oferece ensino infantil":
+    "👶 <strong>Sim, oferecemos Ensino Infantil!</strong><br><br>As crianças pequenas têm educação adequada à idade, com metodologia especializada para o desenvolvimento infantil.",
+
+  "tem ensino fundamental":
+    "📚 <strong>Sim, temos Ensino Fundamental completo!</strong><br><br>Atendemos do 1º ao 9º ano do ensino fundamental, oferecendo uma base sólida para o desenvolvimento acadêmico dos alunos.",
+
+  "e ensino médio":
+    "🎓 <strong>Sim, oferecemos Ensino Médio!</strong><br><br>Os alunos podem concluir o ensino médio na mesma escola, garantindo continuidade no processo educacional.",
+
+  "o colégio tem quadra poliesportiva":
+    "🏃‍♂️ <strong>Sim, temos quadra poliesportiva!</strong><br><br>Nossa quadra permite a prática de diversos esportes como futsal, basquete e vôlei, promovendo a atividade física e o esporte.",
+
+  "oferece atividades extracurriculares":
+    "🎨 <strong>Sim, oferecemos diversas atividades extracurriculares!</strong><br><br>Incluímos esportes, artes, teatro e música para complementar o aprendizado e desenvolver talentos dos alunos.",
+
+  "tem biblioteca":
+    "📖 <strong>Sim, temos biblioteca!</strong><br><br>Oferecemos um espaço dedicado para leitura e estudo dos alunos, com acervo diversificado para apoiar o aprendizado.",
+
+  "aceita transporte escolar":
+    "🚌 <strong>Sim, aceitamos transporte escolar!</strong><br><br>Facilitamos o acesso dos estudantes que moram longe, trabalhando com empresas de transporte escolar credenciadas.",
+
+  "a escola tem laboratório de ciências":
+    "🧪 <strong>Sim, temos laboratório de ciências!</strong><br><br>Os alunos podem fazer experiências práticas de química, física e biologia, enriquecendo o aprendizado teórico com a prática.",
+}
 
 // Inicialização
 document.addEventListener("DOMContentLoaded", () => {
@@ -10,7 +46,15 @@ document.addEventListener("DOMContentLoaded", () => {
 function initializeApp() {
   setupEventListeners()
   setupMenuItems()
-  addWelcomeMessage()
+  loadChatHistory()
+  startNewChat()
+
+  // Verificar se é mobile
+  if (window.innerWidth <= 768) {
+    isSidebarOpen = false
+    document.getElementById("sidebar").classList.add("hidden")
+    document.querySelector(".main-content").classList.add("sidebar-hidden")
+  }
 }
 
 function setupEventListeners() {
@@ -42,6 +86,176 @@ function setupMenuItems() {
   })
 }
 
+// Funções do Sidebar
+function toggleSidebar() {
+  const sidebar = document.getElementById("sidebar")
+  const mainContent = document.querySelector(".main-content")
+
+  isSidebarOpen = !isSidebarOpen
+
+  if (isSidebarOpen) {
+    sidebar.classList.remove("hidden")
+    if (window.innerWidth > 768) {
+      mainContent.classList.remove("sidebar-hidden")
+    }
+  } else {
+    sidebar.classList.add("hidden")
+    mainContent.classList.add("sidebar-hidden")
+  }
+}
+
+function startNewChat() {
+  currentChatId = generateChatId()
+  currentMessages = []
+
+  // Limpar mensagens do chat
+  const chatMessages = document.getElementById("chatMessages")
+  chatMessages.innerHTML = `
+    <div class="welcome-message">
+      <div class="bot-avatar">
+        <i class="fas fa-graduation-cap"></i>
+      </div>
+      <div class="message-content">
+        <h3>Bem-vindo ao ChatDonety! 🎓</h3>
+        <p>Sou seu assistente virtual especializado no Colégio Amorim de Ermelino Matarazzo! Posso te ajudar com informações sobre nossa escola. Use o menu ou digite sua pergunta!</p>
+      </div>
+    </div>
+  `
+
+  // Remover seleção ativa do histórico
+  document.querySelectorAll(".history-item").forEach((item) => {
+    item.classList.remove("active")
+  })
+}
+
+function generateChatId() {
+  return "chat_" + Date.now() + "_" + Math.random().toString(36).substr(2, 9)
+}
+
+function saveChatToHistory(title, messages) {
+  const chat = {
+    id: currentChatId,
+    title: title,
+    messages: [...messages],
+    timestamp: Date.now(),
+  }
+
+  // Adicionar ao histórico
+  chatHistory.unshift(chat)
+
+  // Limitar histórico a 50 conversas
+  if (chatHistory.length > 50) {
+    chatHistory = chatHistory.slice(0, 50)
+  }
+
+  // Salvar no localStorage
+  localStorage.setItem("chatHistory", JSON.stringify(chatHistory))
+
+  // Atualizar UI do histórico
+  updateHistoryUI()
+}
+
+function loadChatHistory() {
+  const saved = localStorage.getItem("chatHistory")
+  if (saved) {
+    chatHistory = JSON.parse(saved)
+    updateHistoryUI()
+  }
+}
+
+function updateHistoryUI() {
+  const now = new Date()
+  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate())
+  const yesterday = new Date(today.getTime() - 24 * 60 * 60 * 1000)
+  const weekAgo = new Date(today.getTime() - 7 * 24 * 60 * 60 * 1000)
+
+  const todayChats = document.getElementById("todayChats")
+  const yesterdayChats = document.getElementById("yesterdayChats")
+  const weekChats = document.getElementById("weekChats")
+
+  // Limpar containers
+  todayChats.innerHTML = ""
+  yesterdayChats.innerHTML = ""
+  weekChats.innerHTML = ""
+
+  chatHistory.forEach((chat) => {
+    const chatDate = new Date(chat.timestamp)
+    const historyItem = createHistoryItem(chat)
+
+    if (chatDate >= today) {
+      todayChats.appendChild(historyItem)
+    } else if (chatDate >= yesterday) {
+      yesterdayChats.appendChild(historyItem)
+    } else if (chatDate >= weekAgo) {
+      weekChats.appendChild(historyItem)
+    }
+  })
+}
+
+function createHistoryItem(chat) {
+  const item = document.createElement("div")
+  item.className = "history-item"
+  item.setAttribute("data-chat-id", chat.id)
+
+  item.innerHTML = `
+    <i class="fas fa-message"></i>
+    <span class="history-item-text">${chat.title}</span>
+    <button class="history-item-delete" onclick="deleteChatFromHistory('${chat.id}', event)">
+      <i class="fas fa-trash"></i>
+    </button>
+  `
+
+  item.addEventListener("click", () => loadChat(chat.id))
+
+  return item
+}
+
+function loadChat(chatId) {
+  const chat = chatHistory.find((c) => c.id === chatId)
+  if (!chat) return
+
+  currentChatId = chatId
+  currentMessages = [...chat.messages]
+
+  // Limpar e recarregar mensagens
+  const chatMessages = document.getElementById("chatMessages")
+  chatMessages.innerHTML = `
+    <div class="welcome-message">
+      <div class="bot-avatar">
+        <i class="fas fa-graduation-cap"></i>
+      </div>
+      <div class="message-content">
+        <h3>Bem-vindo ao ChatDonety! 🎓</h3>
+        <p>Sou seu assistente virtual especializado no Colégio Amorim de Ermelino Matarazzo! Posso te ajudar com informações sobre nossa escola. Use o menu ou digite sua pergunta!</p>
+      </div>
+    </div>
+  `
+
+  // Recarregar mensagens
+  currentMessages.forEach((msg) => {
+    addMessageToUI(msg.text, msg.sender)
+  })
+
+  // Atualizar seleção no histórico
+  document.querySelectorAll(".history-item").forEach((item) => {
+    item.classList.remove("active")
+  })
+  document.querySelector(`[data-chat-id="${chatId}"]`)?.classList.add("active")
+}
+
+function deleteChatFromHistory(chatId, event) {
+  event.stopPropagation()
+
+  chatHistory = chatHistory.filter((chat) => chat.id !== chatId)
+  localStorage.setItem("chatHistory", JSON.stringify(chatHistory))
+  updateHistoryUI()
+
+  // Se o chat deletado era o atual, iniciar novo chat
+  if (currentChatId === chatId) {
+    startNewChat()
+  }
+}
+
 function toggleMenu() {
   const menuPopup = document.getElementById("menuPopup")
   isMenuOpen = !isMenuOpen
@@ -62,7 +276,6 @@ function toggleMenu() {
 }
 
 function toggleTheme() {
-  // Funcionalidade para alternar tema (implementação futura)
   console.log("Toggle theme clicked - Tema claro ativo")
 }
 
@@ -88,6 +301,13 @@ function sendMessage() {
       hideTypingIndicator()
       const response = getResponse(message.toLowerCase())
       addMessage(response, "bot")
+
+      // Salvar no histórico se for a primeira mensagem
+      if (currentMessages.length === 2) {
+        // user + bot
+        const title = message.length > 30 ? message.substring(0, 30) + "..." : message
+        saveChatToHistory(title, currentMessages)
+      }
     },
     1000 + Math.random() * 1000,
   )
@@ -100,6 +320,14 @@ function sendSuggestion(question) {
 }
 
 function addMessage(text, sender) {
+  // Adicionar à lista de mensagens atuais
+  currentMessages.push({ text, sender, timestamp: Date.now() })
+
+  // Adicionar à UI
+  addMessageToUI(text, sender)
+}
+
+function addMessageToUI(text, sender) {
   const chatMessages = document.getElementById("chatMessages")
 
   const messageDiv = document.createElement("div")
@@ -122,10 +350,6 @@ function addMessage(text, sender) {
   chatMessages.scrollTop = chatMessages.scrollHeight
 }
 
-function addWelcomeMessage() {
-  // A mensagem de boas-vindas já está no HTML
-}
-
 function showTypingIndicator() {
   const indicator = document.getElementById("typingIndicator")
   const chatMessages = document.getElementById("chatMessages")
@@ -141,77 +365,97 @@ function hideTypingIndicator() {
 }
 
 function getResponse(question) {
-  const responses = {
-    // INFORMAÇÕES ESPECÍFICAS DO COLÉGIO AMORIM
-    "horários funcionamento":
-      "🕐 <strong>Horários de Funcionamento - Colégio Amorim:</strong><br><br>📚 <strong>Ensino Regular:</strong><br>• Manhã: 7h00 às 12h00<br>• Tarde: 13h00 às 18h00<br><br>🌟 <strong>Ensino Integral:</strong><br>• Segunda a Sexta: 7h00 às 17h00<br><br>🏢 <strong>Secretaria:</strong><br>• Segunda a Sexta: 7h00 às 18h00<br>• Sábado: 8h00 às 12h00<br><br>📞 <strong>Atendimento:</strong> Sempre com hora marcada!",
+  // Normalizar a pergunta removendo acentos e caracteres especiais
+  const normalizedQuestion = question
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^\w\s]/g, "")
+    .trim()
 
-    "matricular filho":
-      "📝 <strong>Processo de Matrícula - Colégio Amorim:</strong><br><br>📋 <strong>Documentos necessários:</strong><br>• RG e CPF do responsável<br>• Certidão de nascimento do aluno<br>• Histórico escolar<br>• Declaração de transferência<br>• Comprovante de residência<br>• Cartão de vacinação<br><br>🗓️ <strong>Período de matrículas:</strong><br>• Novembro a Janeiro<br><br>📞 <strong>Agende sua visita:</strong> (11) 3456-7890",
-
-    mensalidades:
-      "💰 <strong>Valores - Colégio Amorim 2024:</strong><br><br>🎒 <strong>Ensino Fundamental I:</strong><br>• Matrícula: R$ 800,00<br>• Mensalidade: R$ 1.200,00<br><br>📚 <strong>Ensino Fundamental II:</strong><br>• Matrícula: R$ 900,00<br>• Mensalidade: R$ 1.400,00<br><br>🎓 <strong>Ensino Médio:</strong><br>• Matrícula: R$ 1.000,00<br>• Mensalidade: R$ 1.600,00<br><br>💳 <strong>Formas de pagamento:</strong> À vista, cartão ou boleto<br>🎁 <strong>Desconto:</strong> 10% para irmãos",
-
-    "atividades extracurriculares":
-      "⚽ <strong>Atividades Extracurriculares - Colégio Amorim:</strong><br><br>🏃‍♂️ <strong>Esportes:</strong><br>• Futebol e Futsal<br>• Basquete e Vôlei<br>• Natação<br>• Judô e Karatê<br><br>🎨 <strong>Arte e Cultura:</strong><br>• Teatro e Dança<br>• Música e Coral<br>• Artes Plásticas<br><br>🧠 <strong>Acadêmicas:</strong><br>• Robótica<br>• Xadrez<br>• Inglês avançado<br>• Reforço escolar<br><br>📅 <strong>Horários:</strong> Contraturno escolar",
-
-    localizado:
-      "📍 <strong>Localização - Colégio Amorim:</strong><br><br>🏫 <strong>Endereço:</strong><br>Rua das Flores, 123<br>Bairro Jardim Esperança<br>São Paulo - SP<br>CEP: 01234-567<br><br>🚌 <strong>Transporte:</strong><br>• Linhas de ônibus: 123, 456, 789<br>• Estação de metrô mais próxima: Vila Esperança (500m)<br><br>🚗 <strong>Estacionamento:</strong><br>• Gratuito para pais e responsáveis<br>• 50 vagas disponíveis<br><br>🗺️ <strong>Referências:</strong> Próximo ao Shopping Center Norte",
-
-    diferenciais:
-      "⭐ <strong>Diferenciais do Colégio Amorim:</strong><br><br>🎯 <strong>Metodologia:</strong><br>• Ensino personalizado<br>• Turmas reduzidas (máx. 25 alunos)<br>• Acompanhamento individual<br><br>💻 <strong>Tecnologia:</strong><br>• Laboratório de informática<br>• Lousa digital em todas as salas<br>• Plataforma digital de ensino<br><br>🌱 <strong>Valores:</strong><br>• Educação socioemocional<br>• Sustentabilidade<br>• Inclusão e diversidade<br><br>🏆 <strong>Resultados:</strong><br>• 95% de aprovação no ENEM<br>• Medalhas em olimpíadas acadêmicas",
-
-    contato:
-      "📞 <strong>Contatos - Colégio Amorim:</strong><br><br>☎️ <strong>Telefones:</strong><br>• Secretaria: (11) 3456-7890<br>• WhatsApp: (11) 99876-5432<br>• Coordenação: (11) 3456-7891<br><br>📧 <strong>E-mails:</strong><br>• secretaria@colegioamorim.edu.br<br>• coordenacao@colegioamorim.edu.br<br>• diretoria@colegioamorim.edu.br<br><br>🌐 <strong>Redes Sociais:</strong><br>• Instagram: @colegioamorim<br>• Facebook: Colégio Amorim Oficial<br><br>⏰ <strong>Horário de atendimento:</strong> 7h às 18h",
-
-    "séries níveis":
-      "📚 <strong>Séries e Níveis - Colégio Amorim:</strong><br><br>👶 <strong>Educação Infantil:</strong><br>• Maternal (2-3 anos)<br>• Jardim I (4 anos)<br>• Jardim II (5 anos)<br><br>📖 <strong>Ensino Fundamental:</strong><br>• Anos Iniciais (1º ao 5º ano)<br>• Anos Finais (6º ao 9º ano)<br><br>🎓 <strong>Ensino Médio:</strong><br>• 1º, 2º e 3º ano<br>• Preparação para ENEM e vestibulares<br><br>⭐ <strong>Modalidades:</strong><br>• Regular<br>• Integral<br>• Semi-integral",
-
-    "ensino integral":
-      "🌅 <strong>Ensino Integral - Colégio Amorim:</strong><br><br>⏰ <strong>Horário:</strong><br>• 7h00 às 17h00 (Segunda a Sexta)<br><br>🍽️ <strong>Refeições incluídas:</strong><br>• Lanche da manhã<br>• Almoço completo<br>• Lanche da tarde<br><br>📚 <strong>Atividades:</strong><br>• Aulas regulares pela manhã<br>• Almoço e descanso<br>• Atividades extracurriculares à tarde<br>• Apoio pedagógico<br>• Lição de casa orientada<br><br>💰 <strong>Valor adicional:</strong> R$ 400,00/mês<br><br>👨‍👩‍👧‍👦 <strong>Ideal para:</strong> Pais que trabalham período integral",
-
-    // CAPACIDADES DO BOT
-    fazer:
-      "🎯 <strong>Eu posso ajudar você com informações sobre o Colégio Amorim:</strong><br><br>📚 <strong>Informações Acadêmicas:</strong><br>• Processo de matrícula<br>• Horários e funcionamento<br>• Séries e níveis de ensino<br>• Metodologia de ensino<br><br>💰 <strong>Valores e Pagamentos:</strong><br>• Mensalidades e taxas<br>• Formas de pagamento<br>• Descontos disponíveis<br><br>🏫 <strong>Estrutura:</strong><br>• Localização e endereço<br>• Atividades extracurriculares<br>• Diferenciais da escola<br><br>📞 <strong>Contato:</strong><br>• Telefones e e-mails<br>• Como agendar visitas<br><br>💬 <strong>Pergunte à vontade!</strong> 😊",
-
-    capaz:
-      "🎯 <strong>Eu posso ajudar você com informações sobre o Colégio Amorim:</strong><br><br>📚 <strong>Informações Acadêmicas:</strong><br>• Processo de matrícula<br>• Horários e funcionamento<br>• Séries e níveis de ensino<br>• Metodologia de ensino<br><br>💰 <strong>Valores e Pagamentos:</strong><br>• Mensalidades e taxas<br>• Formas de pagamento<br>• Descontos disponíveis<br><br>🏫 <strong>Estrutura:</strong><br>• Localização e endereço<br>• Atividades extracurriculares<br>• Diferenciais da escola<br><br>📞 <strong>Contato:</strong><br>• Telefones e e-mails<br>• Como agendar visitas<br><br>💬 <strong>Pergunte à vontade!</strong> 😊",
-  }
-
-  // Buscar resposta baseada em palavras-chave
+  // Buscar resposta exata
   for (const [key, response] of Object.entries(responses)) {
-    if (question.includes(key.replace(" ", "")) || key.split(" ").every((word) => question.includes(word))) {
+    const normalizedKey = key
+      .toLowerCase()
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .replace(/[^\w\s]/g, "")
+
+    if (normalizedQuestion.includes(normalizedKey) || normalizedKey.includes(normalizedQuestion)) {
       return response
     }
   }
 
-  // Respostas específicas para palavras-chave gerais sobre o Colégio Amorim
-  if (question.includes("amorim")) {
-    return "🏫 <strong>Colégio Amorim - Excelência em Educação!</strong><br><br>📍 <strong>Sobre nós:</strong><br>• Mais de 30 anos de tradição<br>• Ensino de qualidade da Educação Infantil ao Ensino Médio<br>• Metodologia inovadora e personalizada<br><br>🌟 <strong>O que posso te ajudar:</strong><br>• Informações sobre matrícula<br>• Valores e mensalidades<br>• Atividades e horários<br>• Localização e contato<br><br>💬 <strong>Faça sua pergunta!</strong>"
+  // Buscar por palavras-chave específicas
+  if (
+    normalizedQuestion.includes("cidade") ||
+    normalizedQuestion.includes("sao paulo") ||
+    normalizedQuestion.includes("sp")
+  ) {
+    return responses["qual cidade fica o colégio amorim"]
   }
 
-  if (question.includes("matrícula") || question.includes("matricula")) {
-    return "📝 <strong>Matrícula no Colégio Amorim:</strong><br><br>📅 <strong>Período:</strong> Novembro a Janeiro<br><br>📋 <strong>Documentos:</strong><br>• RG e CPF do responsável<br>• Certidão de nascimento<br>• Histórico escolar<br>• Comprovante de residência<br><br>📞 <strong>Agende sua visita:</strong> (11) 3456-7890<br><br>💡 <strong>Dica:</strong> Visite nossa escola para conhecer nossa estrutura!"
+  if (
+    normalizedQuestion.includes("bairro") ||
+    normalizedQuestion.includes("ermelino") ||
+    normalizedQuestion.includes("matarazzo")
+  ) {
+    return responses["qual bairro é a unidade que estamos falando"]
   }
 
-  if (question.includes("valor") || question.includes("preço") || question.includes("mensalidade")) {
-    return "💰 <strong>Valores do Colégio Amorim:</strong><br><br>🎒 <strong>Fund. I:</strong> R$ 1.200,00/mês<br>📚 <strong>Fund. II:</strong> R$ 1.400,00/mês<br>🎓 <strong>Ensino Médio:</strong> R$ 1.600,00/mês<br><br>🎁 <strong>Descontos:</strong><br>• 10% para irmãos<br>• 5% pagamento à vista<br><br>📞 <strong>Mais informações:</strong> (11) 3456-7890"
+  if (
+    normalizedQuestion.includes("infantil") ||
+    normalizedQuestion.includes("crianca") ||
+    normalizedQuestion.includes("pequena")
+  ) {
+    return responses["o colégio oferece ensino infantil"]
   }
 
-  if (question.includes("localização") || question.includes("endereço") || question.includes("onde fica")) {
-    return "📍 <strong>Localização do Colégio Amorim:</strong><br><br>🏫 <strong>Endereço:</strong><br>Rua das Flores, 123<br>Jardim Esperança - São Paulo/SP<br>CEP: 01234-567<br><br>🚌 <strong>Transporte:</strong><br>• Ônibus: 123, 456, 789<br>• Metrô: Vila Esperança (500m)<br><br>🚗 <strong>Estacionamento gratuito</strong><br><br>🗺️ <strong>Referência:</strong> Próximo ao Shopping Center Norte"
+  if (normalizedQuestion.includes("fundamental")) {
+    return responses["tem ensino fundamental"]
   }
 
-  if (question.includes("contato") || question.includes("telefone") || question.includes("whatsapp")) {
-    return "📞 <strong>Contatos do Colégio Amorim:</strong><br><br>☎️ <strong>Telefones:</strong><br>• Secretaria: (11) 3456-7890<br>• WhatsApp: (11) 99876-5432<br><br>📧 <strong>E-mail:</strong><br>secretaria@colegioamorim.edu.br<br><br>🌐 <strong>Redes Sociais:</strong><br>• @colegioamorim<br><br>⏰ <strong>Atendimento:</strong> 7h às 18h"
+  if (normalizedQuestion.includes("medio") || normalizedQuestion.includes("ensino medio")) {
+    return responses["e ensino médio"]
   }
 
-  // Respostas padrão mais amigáveis
+  if (
+    normalizedQuestion.includes("quadra") ||
+    normalizedQuestion.includes("esporte") ||
+    normalizedQuestion.includes("poliesportiva")
+  ) {
+    return responses["o colégio tem quadra poliesportiva"]
+  }
+
+  if (normalizedQuestion.includes("extracurricular") || normalizedQuestion.includes("atividade")) {
+    return responses["oferece atividades extracurriculares"]
+  }
+
+  if (normalizedQuestion.includes("biblioteca") || normalizedQuestion.includes("livro")) {
+    return responses["tem biblioteca"]
+  }
+
+  if (
+    normalizedQuestion.includes("transporte") ||
+    normalizedQuestion.includes("onibus") ||
+    normalizedQuestion.includes("van")
+  ) {
+    return responses["aceita transporte escolar"]
+  }
+
+  if (
+    normalizedQuestion.includes("laboratorio") ||
+    normalizedQuestion.includes("ciencia") ||
+    normalizedQuestion.includes("experiencia")
+  ) {
+    return responses["a escola tem laboratório de ciências"]
+  }
+
+  // Resposta padrão
   const defaultResponses = [
-    "🤔 Hmm, não tenho essa informação específica sobre o Colégio Amorim.<br><br>💡 <strong>Posso ajudar com:</strong><br>• Processo de matrícula<br>• Horários e valores<br>• Atividades e localização<br><br>📞 <strong>Ou ligue:</strong> (11) 3456-7890",
-    "💭 Interessante! Para informações mais específicas sobre o Colégio Amorim, recomendo entrar em contato diretamente.<br><br>📞 <strong>Telefone:</strong> (11) 3456-7890<br>📱 <strong>WhatsApp:</strong> (11) 99876-5432",
-    "🎯 Não encontrei essa informação no meu banco de dados sobre o Colégio Amorim.<br><br>📋 <strong>Use o menu</strong> para ver as perguntas que posso responder!<br><br>📞 <strong>Contato direto:</strong> (11) 3456-7890",
-    "✨ Ainda estou aprendendo sobre esse aspecto do Colégio Amorim.<br><br>🏫 <strong>Para informações detalhadas:</strong><br>📞 (11) 3456-7890<br>📧 secretaria@colegioamorim.edu.br<br><br>💬 <strong>Ou pergunte sobre:</strong> matrícula, horários, valores!",
+    "🤔 Não encontrei essa informação específica sobre o Colégio Amorim.<br><br>💡 <strong>Posso ajudar com:</strong><br>• Localização da escola<br>• Níveis de ensino oferecidos<br>• Estrutura e atividades<br>• Serviços disponíveis<br><br>📋 <strong>Use o menu</strong> para ver as perguntas que posso responder!",
+    "💭 Interessante! Não tenho essa informação no momento.<br><br>🎯 <strong>Pergunte sobre:</strong><br>• Onde fica o colégio<br>• Que séries atendemos<br>• Nossa estrutura<br>• Atividades oferecidas<br><br>📞 <strong>Para mais informações:</strong> Entre em contato diretamente com a escola!",
+    "🎯 Ainda não tenho essa informação sobre o Colégio Amorim.<br><br>📚 <strong>Posso responder sobre:</strong><br>• Localização e bairro<br>• Ensino infantil, fundamental e médio<br>• Quadra, biblioteca e laboratório<br>• Transporte e atividades<br><br>💬 <strong>Reformule sua pergunta</strong> ou use o menu de sugestões!",
   ]
 
   return defaultResponses[Math.floor(Math.random() * defaultResponses.length)]
@@ -224,5 +468,20 @@ document.addEventListener("click", (e) => {
 
   if (isMenuOpen && !menuPopup.contains(e.target) && !menuButton.contains(e.target)) {
     toggleMenu()
+  }
+})
+
+// Responsividade para sidebar
+window.addEventListener("resize", () => {
+  if (window.innerWidth <= 768) {
+    if (isSidebarOpen) {
+      document.getElementById("sidebar").classList.add("show")
+    }
+  } else {
+    document.getElementById("sidebar").classList.remove("show")
+    if (isSidebarOpen) {
+      document.getElementById("sidebar").classList.remove("hidden")
+      document.querySelector(".main-content").classList.remove("sidebar-hidden")
+    }
   }
 })
