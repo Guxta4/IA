@@ -3,134 +3,360 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ChatDonety - Seu Assistente Divertido</title>
-    <link rel="stylesheet" href="styles.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <title>Chatbot Educacional</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .chat-container {
+            width: 400px;
+            height: 600px;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .chat-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            text-align: center;
+            position: relative;
+        }
+
+        .menu-button {
+            position: absolute;
+            left: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(255,255,255,0.2);
+            border: none;
+            color: white;
+            padding: 8px;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .menu-button:hover {
+            background: rgba(255,255,255,0.3);
+            transform: translateY(-50%) scale(1.1);
+        }
+
+        .chat-messages {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            background: #f8f9fa;
+        }
+
+        .message {
+            display: flex;
+            margin-bottom: 15px;
+            align-items: flex-start;
+        }
+
+        .message.user {
+            justify-content: flex-end;
+        }
+
+        .message-bubble {
+            max-width: 80%;
+            padding: 12px 16px;
+            border-radius: 18px;
+            word-wrap: break-word;
+        }
+
+        .message.user .message-bubble {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            margin-left: 10px;
+        }
+
+        .message.bot .message-bubble {
+            background: white;
+            color: #333;
+            border: 1px solid #e0e0e0;
+            margin-right: 10px;
+        }
+
+        .user-avatar, .bot-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            flex-shrink: 0;
+        }
+
+        .user-avatar {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .bot-avatar {
+            background: #f0f0f0;
+            color: #666;
+        }
+
+        .chat-input {
+            padding: 20px;
+            background: white;
+            border-top: 1px solid #e0e0e0;
+        }
+
+        .input-container {
+            display: flex;
+            align-items: flex-end;
+            gap: 10px;
+        }
+
+        #userInput {
+            flex: 1;
+            border: 1px solid #ddd;
+            border-radius: 20px;
+            padding: 12px 16px;
+            resize: none;
+            max-height: 100px;
+            min-height: 44px;
+            font-family: inherit;
+            outline: none;
+            transition: border-color 0.3s ease;
+        }
+
+        #userInput:focus {
+            border-color: #667eea;
+        }
+
+        .send-button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 44px;
+            height: 44px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .send-button:hover {
+            transform: scale(1.1);
+        }
+
+        .welcome-message {
+            text-align: center;
+            color: #666;
+            margin-bottom: 20px;
+            padding: 20px;
+            background: white;
+            border-radius: 15px;
+            border: 1px solid #e0e0e0;
+        }
+
+        .typing-indicator {
+            display: none;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .typing-indicator.active {
+            display: flex;
+        }
+
+        .typing-dots {
+            display: flex;
+            gap: 4px;
+            margin-left: 10px;
+        }
+
+        .typing-dots span {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #ccc;
+            animation: typing 1.4s infinite ease-in-out;
+        }
+
+        .typing-dots span:nth-child(1) { animation-delay: -0.32s; }
+        .typing-dots span:nth-child(2) { animation-delay: -0.16s; }
+
+        @keyframes typing {
+            0%, 80%, 100% { transform: scale(0.8); opacity: 0.5; }
+            40% { transform: scale(1); opacity: 1; }
+        }
+
+        .menu-popup {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .menu-popup.active {
+            opacity: 1;
+        }
+
+        .menu-content {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            max-width: 350px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            transform: scale(0.8);
+            transition: transform 0.3s ease;
+        }
+
+        .menu-popup.active .menu-content {
+            transform: scale(1);
+        }
+
+        .menu-title {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #333;
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        .menu-item {
+            padding: 12px 16px;
+            margin-bottom: 8px;
+            background: #f8f9fa;
+            border: 1px solid #e0e0e0;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 14px;
+        }
+
+        .menu-item:hover {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .close-menu {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #666;
+        }
+    </style>
 </head>
 <body>
-    <div class="app-container">
-        <!-- Header moderno -->
-        <header class="modern-header">
+    <div class="chat-container">
+        <div class="chat-header">
             <button class="menu-button" onclick="toggleMenu()">
                 <i class="fas fa-bars"></i>
             </button>
-            <div class="logo-container">
-                <div class="logo-icon">
-                    <i class="fas fa-robot"></i>
-                </div>
-                <div class="logo-text">
-                    <h1>ChatDonety</h1>
-                    <span class="subtitle">AI Assistant</span>
-                </div>
+            <h2>🤖 Assistente Educacional</h2>
+        </div>
+        
+        <div class="chat-messages" id="chatMessages">
+            <div class="welcome-message">
+                <h3>👋 Olá! Bem-vindo!</h3>
+                <p>Sou seu assistente educacional. Posso ajudar com informações sobre escolas, supermercados, adoção e especialmente sobre o <strong>Colégio Amorim</strong>!</p>
+                <p><small>💡 Use o menu ou digite sua pergunta</small></p>
             </div>
-            <div class="header-actions">
-                <button class="theme-toggle" onclick="toggleTheme()">
-                    <i class="fas fa-moon"></i>
+        </div>
+        
+        <div class="typing-indicator" id="typingIndicator">
+            <div class="bot-avatar">
+                <i class="fas fa-robot"></i>
+            </div>
+            <div class="typing-dots">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+        
+        <div class="chat-input">
+            <div class="input-container">
+                <textarea id="userInput" placeholder="Digite sua pergunta..." rows="1"></textarea>
+                <button class="send-button" onclick="sendMessage()">
+                    <i class="fas fa-paper-plane"></i>
                 </button>
             </div>
-        </header>
-
-        <!-- Menu moderno -->
-        <div class="menu-overlay" id="menuPopup">
-            <div class="menu-container">
-                <div class="menu-header">
-                    <h2>Perguntas Sugeridas</h2>
-                    <button class="close-button" onclick="toggleMenu()">
-                        <i class="fas fa-times"></i>
-                    </button>
-                </div>
-                <div class="menu-content">
-                    <div class="menu-item" data-question="Qual é o melhor colégio para estudar nesta região: São Paulo?">
-                        <i class="fas fa-gamepad"></i>
-                        <span>Melhores escolas São Paulo</span>
-                    </div>
-                    <div class="menu-item" data-question="Qual é o melhor colégio para estudar nesta região:Rio Grande do Sul? ">
-                        <i class="fas fa-desktop"></i>
-                        <span>Melhores escolas Rio Grande do Sul</span>
-                    </div>
-                    <div class="menu-item" data-question="Qual é o melhor supermercado para fazer compras nesta região: São Paulo?">
-                        <i class="fas fa-mobile-alt"></i>
-                        <span>Melhores supermercado São Paulo </pan>
-                    </div>
-                    <div class="menu-item" data-question="Qual é o melhor supermercado para fazer compras nesta região: Rio Grande do Sul?">
-                        <i class="fab fa-youtube"></i>
-                        <span>Melhores supermercado Rio Grande do Sul</span>
-                    </div>
-                    <div class="menu-item" data-question="Qual é o melhor orfanato para eu adotar nesta região: São Paulo?">
-                        <i class="fas fa-trophy"></i>
-                        <span>Melhores orfanatos São Paulo</span>
-                    </div>
-                    <div class="menu-item" data-question="Qual é o melhor orfanato para eu adotar nesta região: Rio Grande do Sul?">
-                        <i class="fas fa-microchip"></i>
-                        <span>Melhores orfanatos Rio Grande do Sul</span>
-                    </div>
-                    <div class="menu-item" data-question="Qual é o melhor orfanato para eu adotar nesta região: Minas Gerais?">
-                        <i class="fas fa-utensils"></i>
-                        <span>Melhores orfanatos Minas Gerais</span>
-                    </div>
-                    <div class="menu-item" data-question="Qual é o melhor supermercado para fazer compras nesta região: Minas Gerais?">
-                        <i class="fas fa-cube"></i>
-                        <span>Melhores supermercado Minas Gerais</span>
-                    </div>
-                    <div class="menu-item" data-question="Qual é o melhor colégio para estudar nesta região: Minas Gerais?">
-                        <i class="fas fa-anchor"></i>
-                        <span>Melhores escolas Minas Gerais</span>
-                    </div>
-                    <div class="menu-item" data-question="O que você é capaz de fazer?">
-                        <i class="fas fa-question-circle"></i>
-                        <span>Minhas capacidades</span>
-                    </div>
-                </div>
-            </div>
         </div>
-
-        <!-- Chat container moderno -->
-        <main class="chat-main">
-            <div class="chat-messages" id="chatMessages">
-                <div class="welcome-message">
-                    <div class="bot-avatar">
-                        <i class="fas fa-robot"></i>
-                    </div>
-                    <div class="message-content">
-                        <h3>Olá! Eu sou o ChatDonety! 👋</h3>
-                        <p>Seu assistente pessoal para poder te ajudar em procura de escolas,orfanatos,mercados e muito mais! Pergunte-me qualquer coisa ou use o menu para ver sugestões.</p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Input area moderna -->
-            <div class="input-container">
-                <div class="input-wrapper">
-                    <input type="text" id="userInput" placeholder="Digite sua pergunta aqui..." autocomplete="off">
-                    <button class="send-button" onclick="sendMessage()">
-                        <i class="fas fa-paper-plane"></i>
-                    </button>
-                </div>
-                <div class="input-suggestions">
-                    <button class="suggestion-chip" onclick="sendSuggestion('Qual é o melhor jogo?')">
-                        🎮 Melhor jogo
-                    </button>
-                    <button class="suggestion-chip" onclick="sendSuggestion('Como montar um PC?')">
-                        💻 Montar PC
-                    </button>
-                    <button class="suggestion-chip" onclick="sendSuggestion('Receita de panqueca')">
-                        🥞 Receitas
-                    </button>
-                </div>
-            </div>
-        </main>
     </div>
 
-    <!-- Loading indicator -->
-    <div class="typing-indicator" id="typingIndicator">
-        <div class="bot-avatar">
-            <i class="fas fa-robot"></i>
-        </div>
-        <div class="typing-dots">
-            <span></span>
-            <span></span>
-            <span></span>
+    <div class="menu-popup" id="menuPopup">
+        <div class="menu-content">
+            <button class="close-menu" onclick="toggleMenu()">×</button>
+            <div class="menu-title">📋 Perguntas Frequentes</div>
+            
+            <div class="menu-item" data-question="Qual cidade fica o Colégio Amorim?">
+                📍 Localização do Colégio Amorim
+            </div>
+            <div class="menu-item" data-question="O colégio oferece ensino infantil?">
+                👶 Ensino Infantil - Colégio Amorim
+            </div>
+            <div class="menu-item" data-question="Tem ensino fundamental?">
+                📚 Ensino Fundamental - Colégio Amorim
+            </div>
+            <div class="menu-item" data-question="E ensino médio?">
+                🎓 Ensino Médio - Colégio Amorim
+            </div>
+            <div class="menu-item" data-question="O colégio tem quadra poliesportiva?">
+                ⚽ Quadra Poliesportiva
+            </div>
+            <div class="menu-item" data-question="Oferece atividades extracurriculares?">
+                🎭 Atividades Extracurriculares
+            </div>
+            <div class="menu-item" data-question="Tem biblioteca?">
+                📚 Biblioteca do Colégio
+            </div>
+            <div class="menu-item" data-question="A escola tem laboratório de ciências?">
+                🔬 Laboratório de Ciências
+            </div>
+            <div class="menu-item" data-question="Aceita transporte escolar?">
+                🚌 Transporte Escolar
+            </div>
+            <div class="menu-item" data-question="Melhores escolas em São Paulo">
+                🏫 Escolas em São Paulo
+            </div>
+            <div class="menu-item" data-question="Melhores supermercados em São Paulo">
+                🛒 Supermercados em São Paulo
+            </div>
+            <div class="menu-item" data-question="O que você pode fazer?">
+                🤖 Minhas Capacidades
+            </div>
         </div>
     </div>
 
